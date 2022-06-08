@@ -22,15 +22,8 @@
   </screenshots>
   <content_rating type="oars-1.1"/>
   <releases>
-    <release version="8.4.1" date="2022-03-28">
-      <description>
-        <ul>
-          <li>Redesigned context menu</li>
-          <li>Track viewport mode</li>
-          <li>Setting hyperlinks to layers</li>
-          <li>Improvements</li>
-        </ul>
-      </description>
-    </release>
+    <release version="8.5.2" date="2022-06-08"/>  
+    <release version="8.4.1" date="2022-03-28"/>
+    <release version="8.3.0" date="2022-03-02"/>
   </releases> 
 </component>
