@@ -31,7 +31,8 @@ modules:
       - install -D lunacy ${FLATPAK_DEST}/bin/lunacy
       - install -D /usr/bin/ar -t ${FLATPAK_DEST}/bin
       - mkdir -p ${FLATPAK_DEST}/lib
-      - ARCH_TRIPLE=$(gcc --print-multiarch) && cp /usr/lib/${ARCH_TRIPLE}/libbfd-*.so ${FLATPAK_DEST}/lib
+      - ARCH_TRIPLE=$(gcc --print-multiarch) && cp /usr/lib/${ARCH_TRIPLE}/libbfd-*.so
+        ${FLATPAK_DEST}/lib
       - install -D apply_extra ${FLATPAK_DEST}/bin/apply_extra
       - install -D -t ${FLATPAK_DEST}/share/applications com.icons8.Lunacy.desktop
       - install -D -t ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps com.icons8.Lunacy.svg
@@ -41,9 +42,9 @@ modules:
     sources:
       - type: extra-data
         filename: Lunacy.deb
-        url: https://lun-eu.icons8.com/s/setup/Lunacy_8.5.2.deb
-        sha256: cc8dccc841bd1b85dcfddd3dcf0fecdd29ace28a3e8bb005a50c2426d47ed8a3
-        size: 219558692
+        url: https://lun-eu.icons8.com/s/setup/Lunacy_8.6.2.deb
+        sha256: 1db7cb3495e0ccce75ac996e7138c77d6cb72bd62a058848d79caa865ed9aa62
+        size: 216308940
         only-arches:
           - x86_64
         x-checker-data:
