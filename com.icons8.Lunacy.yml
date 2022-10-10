@@ -50,7 +50,7 @@ modules:
         x-checker-data:
           type: html
           url: https://docs.icons8.com/release-notes
-          pattern: (https://lun-eu.icons8.com/s/setup/Lunacy_([0-9.]+).deb)
+          pattern: (https://\S+/setup/Lunacy_([0-9.]+).deb)
           is-main-source: true
 
       - type: script
