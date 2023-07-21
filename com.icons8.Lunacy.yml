@@ -52,7 +52,6 @@ modules:
           url: https://docs.icons8.com/release-notes
           pattern: (https://\S+/setup/Lunacy_([0-9.]+).deb)
           is-main-source: true
-
       - type: extra-data
         filename: Lunacy.ARM.deb
         url: https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb
