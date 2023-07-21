@@ -53,6 +53,18 @@ modules:
           pattern: (https://\S+/setup/Lunacy_([0-9.]+).deb)
           is-main-source: true
 
+      - type: extra-data
+        filename: Lunacy.ARM.deb
+        url: https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb
+        sha256: e69a7f30645e493c9816016ac4ee6f3d869194cec4aff9efaa833851b4bbe019
+        size: 209463248
+        only-arches:
+          - aarch64
+        x-checker-data:
+          type: html
+          url: https://docs.icons8.com/release-notes
+          pattern: (https://\S+/setup/Lunacy_([0-9.]+).ARM.deb)
+          
       - type: script
         dest-filename: apply_extra
         commands:
