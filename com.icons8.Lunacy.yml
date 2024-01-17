@@ -1,6 +1,6 @@
 app-id: com.icons8.Lunacy
 runtime: org.freedesktop.Platform
-runtime-version: 21.08
+runtime-version: "23.08"
 sdk: org.freedesktop.Sdk
 command: lunacy
 build-options:
@@ -18,7 +18,6 @@ finish-args:
   - --filesystem=xdg-documents
   - --filesystem=xdg-run/gvfs
   - --filesystem=xdg-run/gvfsd
-  - --filesystem=xdg-config/fontconfig:ro
   - --talk-name=org.gtk.vfs.*
   # Network needed for remote asset importing
   - --share=network
@@ -42,9 +41,9 @@ modules:
     sources:
       - type: extra-data
         filename: Lunacy.deb
-        url: https://lcdn.icons8.com/setup/Lunacy_9.2.1.deb
-        sha256: ae6375fe5d020957504f6c66ed02fe731b563e96513d1c5cbe722aaf4316ef80
-        size: 232893436
+        url: https://lcdn.icons8.com/setup/Lunacy_9.3.3.deb
+        sha256: 6e821b240fd4ba20376e65db657ae8dc886315487a258b0e129aeade7ebaf319
+        size: 257608284
         only-arches:
           - x86_64
         x-checker-data:
@@ -56,7 +55,7 @@ modules:
       - type: script
         dest-filename: apply_extra
         commands:
-          - ar x Lunacy.deb
+          - bsdtar xf Lunacy.deb
           - tar xf data.tar.xz --no-same-owner
           - mv opt/icons8/lunacy/* .
           - rm -rf control.tar.xz data.tar.xz debian-binary Lunacy.deb opt
