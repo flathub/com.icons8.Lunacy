@@ -1,6 +1,6 @@
 app-id: com.icons8.Lunacy
 runtime: org.freedesktop.Platform
-runtime-version: "23.08"
+runtime-version: '23.08'
 sdk: org.freedesktop.Sdk
 command: lunacy
 build-options:
@@ -41,9 +41,9 @@ modules:
     sources:
       - type: extra-data
         filename: Lunacy.deb
-        url: https://lcdn.icons8.com/setup/Lunacy_9.3.3.deb
-        sha256: 6e821b240fd4ba20376e65db657ae8dc886315487a258b0e129aeade7ebaf319
-        size: 257608284
+        url: https://lcdn.icons8.com/setup/Lunacy_9.4.1.deb
+        sha256: ca408e877d5ef4788cf1259bf5371735539fc58fcbcfd18454ea6b6ae8a64bc9
+        size: 77982212
         only-arches:
           - x86_64
         x-checker-data:
