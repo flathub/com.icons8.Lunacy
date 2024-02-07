@@ -2,16 +2,20 @@
 <component type="desktop-application">
   <id>com.icons8.Lunacy</id>
   <name>Lunacy</name>
-  <summary>Free design software that keeps your flow with AI tools and built-in graphics</summary>
+  <summary>Graphic design for UI/UX and web</summary>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>LicenseRef-proprietary</project_license>
   <description>
-    <p>
-      Lunacy is a next-gen vector graphic software for UI, UX, and web design. It has everything you are used to in other similar apps and goes beyond. Created by designers for designers to focus on the workflow and minimize distractions. No more wasting time surfing the internet for graphics or switching apps to remove backgrounds, or thinking placeholder texts. Lunacy has it all and even more. Faster than Figma, smarter than Sketch!
-    </p>
-    <p>
-      This wrapper is not verified by, affiliated with, or supported by Icons8 LLC.
-    </p>
+    <p>Next-gen vector graphic design app that combines the best features of other design apps to help you optimize your workflow and minimize distractions. Take advantage of the built-in graphics library, use powerful AI tools, and collaborate on projects with your team on several platforms simultaneously! Lunacy also offers cross-app format support, offline use, and cloud storage.</p>
+    <ul>
+      <li>100% free for both personal and commercial use</li>
+      <li>Easy to learn</li>
+      <li>AI routine-killers: remove backgrounds, enhance images, create placeholder text, generate avatars</li>
+      <li>Collaborate in real-time with comments, stickers, and audio messages</li>
+      <li>Design unique experiences with Auto Layout, Arc Editor, Auto Z-index, automatic shape coloring, and linked web design</li>
+      <li>Stunning graphic assets with 1.3M icons, 140K photos, and 71K illustrations</li>
+    </ul>
+    <p>Boundless import & export: work with Figma and Sketch projects, transform your designs into CSS code, or export assets in PNG, SVG, JPEG, PDF, WEBP, TIFF, GIF, and ICO formats in any resolution.</p>
   </description>
   <url type="homepage">https://icons8.com/lunacy</url>
   <launchable type="desktop-id">com.icons8.Lunacy.desktop</launchable>
