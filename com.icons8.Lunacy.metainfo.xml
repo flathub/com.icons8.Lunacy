@@ -3,6 +3,10 @@
   <id>com.icons8.Lunacy</id>
   <name>Lunacy</name>
   <summary>Graphic design for UI/UX and web</summary>
+  <developer_name translatable="no">Icons8</developer_name>
+  <developer id="icons8.com">
+    <name translatable="no">Icons8</name>
+  </developer>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>LicenseRef-proprietary</project_license>
   <description>
