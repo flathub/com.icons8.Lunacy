@@ -13,20 +13,18 @@
     <p>
       Lunacy is the ultimate graphic design editor for UX/UI, and Web. It combines the best features of all the designer apps to help you optimize your workflow and minimize distractions. Take advantage of the built-in graphics library, use powerful AI tools, and collaborate on projects with your team on several platforms simultaneously!
     </p>
-    <p>
-      Let’s take a look at what’s inside:
-      <ul>
-        <li>Real-time collaboration with comments, stickers, and audio messages</li>
-        <li>1 500 000 icons, photos, and illustrations</li>
-        <li>AI routine killers: BG remover, image upscaler, text and avatar generators</li>
-        <li>Figma &amp; Sketch support</li>
-        <li>Cloud storage</li>
-        <li>Private offline mode</li>
-        <li>Low system requirements</li>
-        <li>25 supported languages</li>
-      </ul>
-      And much more!
-    </p>
+    <p>Let’s take a look at what’s inside:</p>
+    <ul>
+      <li>Real-time collaboration with comments, stickers, and audio messages</li>
+      <li>1 500 000 icons, photos, and illustrations</li>
+      <li>AI routine killers: BG remover, image upscaler, text and avatar generators</li>
+      <li>Figma &amp; Sketch support</li>
+      <li>Cloud storage</li>
+      <li>Private offline mode</li>
+      <li>Low system requirements</li>
+      <li>25 supported languages</li>
+    </ul>
+    <p>And much more!</p>
   </description>
   <url type="homepage">https://icons8.com/lunacy</url>
   <launchable type="desktop-id">com.icons8.Lunacy.desktop</launchable>
