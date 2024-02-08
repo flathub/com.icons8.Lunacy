@@ -2,22 +2,39 @@
 <component type="desktop-application">
   <id>com.icons8.Lunacy</id>
   <name>Lunacy</name>
-  <summary>Free design software that keeps your flow with AI tools and built-in graphics</summary>
+  <summary>Free graphic design tool for UX/UI</summary>
+  <developer_name translatable="no">Icons8</developer_name>
+  <developer id="icons8.com">
+    <name translatable="no">Icons8</name>
+  </developer>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>LicenseRef-proprietary</project_license>
   <description>
     <p>
-      Lunacy is a next-gen vector graphic software for UI, UX, and web design. It has everything you are used to in other similar apps and goes beyond. Created by designers for designers to focus on the workflow and minimize distractions. No more wasting time surfing the internet for graphics or switching apps to remove backgrounds, or thinking placeholder texts. Lunacy has it all and even more. Faster than Figma, smarter than Sketch!
+      Lunacy is the ultimate graphic design editor for UX/UI, and Web. It combines the best features of all the designer apps to help you optimize your workflow and minimize distractions. Take advantage of the built-in graphics library, use powerful AI tools, and collaborate on projects with your team on several platforms simultaneously!
     </p>
     <p>
-      This wrapper is not verified by, affiliated with, or supported by Icons8 LLC.
+      Let’s take a look at what’s inside:
+      <ul>
+        <li>Real-time collaboration with comments, stickers, and audio messages</li>
+        <li>1 500 000 icons, photos, and illustrations</li>
+        <li>AI routine killers: BG remover, image upscaler, text and avatar generators</li>
+        <li>Figma &amp; Sketch support</li>
+        <li>Cloud storage</li>
+        <li>Private offline mode</li>
+        <li>Low system requirements</li>
+        <li>25 supported languages</li>
+      </ul>
+      And much more!
     </p>
   </description>
   <url type="homepage">https://icons8.com/lunacy</url>
   <launchable type="desktop-id">com.icons8.Lunacy.desktop</launchable>
   <screenshots>
     <screenshot type="default">
-      <image>https://maxst.icons8.com/vue-static/landings/lunacy-new/native-linux-x1.jpg</image>
+      <image>https://cloud.icons8.com/s/ZSg2yqHfFBDTrD5/download/Use%201.5%20million%20icons,%20illustrations,%20and%20photos.png</image>
+      <image>https://cloud.icons8.com/s/NLwSE6bX87MMRA8/download/Graphic%20design%20reimagined.png</image>
+      <image>https://cloud.icons8.com/s/sAA3qcxwR67N9kY/download/Collaborate%20in%20real-time.png</image>
     </screenshot>
   </screenshots>
   <content_rating type="oars-1.1"/>
@@ -32,8 +49,8 @@
     <release version="9.0.0" date="2023-02-28"/>
     <release version="8.7.2" date="2022-10-03"/>
     <release version="8.6.2" date="2022-07-21"/>
-    <release version="8.5.2" date="2022-06-08"/>  
+    <release version="8.5.2" date="2022-06-08"/>
     <release version="8.4.1" date="2022-03-28"/>
     <release version="8.3.0" date="2022-03-02"/>
-  </releases> 
+  </releases>
 </component>
