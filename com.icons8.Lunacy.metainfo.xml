@@ -25,14 +25,27 @@
       <li>25 supported languages</li>
     </ul>
     <p>And much more!</p>
+    <p>Don’t forget to join our growing designer community!</p>
+    <ul>
+      <li>Our X: https://twitter.com/Icons8_Lunacy</li>
+      <li>Request a feature: https://lunatics.icons8.com/discussions</li>
+      <li>Report a bug: https://community.icons8.com/c/lunacy/7</li>
+    </ul>
   </description>
   <url type="homepage">https://icons8.com/lunacy</url>
   <launchable type="desktop-id">com.icons8.Lunacy.desktop</launchable>
   <screenshots>
     <screenshot type="default">
-      <image>https://cloud.icons8.com/s/ZSg2yqHfFBDTrD5/download/Use%201.5%20million%20icons,%20illustrations,%20and%20photos.png</image>
-      <image>https://cloud.icons8.com/s/NLwSE6bX87MMRA8/download/Graphic%20design%20reimagined.png</image>
-      <image>https://cloud.icons8.com/s/sAA3qcxwR67N9kY/download/Collaborate%20in%20real-time.png</image>
+      <image>https://cloud.icons8.com/s/FXdw54epZrmy8JP/download/Build%20projects%20beyond%20imagination.png</image>
+      <image>https://cloud.icons8.com/s/gHqyN8ScxjbWntq/download/Collaborate%20in%20real-time.png</image>
+      <image>https://cloud.icons8.com/s/er2qHAQnsd6XqQZ/download/Design%20faster%20with%20auto%20layout.png</image>
+      <image>https://cloud.icons8.com/s/JFMY7fyF6qX7ppt/download/Generate%20content%20and%20enhance%20images.png</image>
+      <image>https://cloud.icons8.com/s/Eq8qYWZmLf3QsTm/download/Graphic%20design%20reimagined.png</image>
+      <image>https://cloud.icons8.com/s/SY7SNm2tZbYsmMH/download/Import%20your%20latest%20designs%20from%20Figma%20and%20work%20in%20other%20formats.png</image>
+      <image>https://cloud.icons8.com/s/ssKAd2q5BscGtb7/download/No%20need%20to%20stay%20online.png</image>
+      <image>https://cloud.icons8.com/s/dJbLgarE2Pk2rgM/download/Prototype%20to%20your%20heart%E2%80%99s%20content!.png</image>
+      <image>https://cloud.icons8.com/s/M4XN4qMrS4kcCEg/download/Store%20your%20files%20in%20the%20cloud%20and%20access%20them%20anywhere.png</image>
+      <image>https://cloud.icons8.com/s/3XW8QxeeiHFpNaW/download/Use%201.5%20million%20icons,%20illustrations,%20and%20photos.png</image>
     </screenshot>
   </screenshots>
   <content_rating type="oars-1.1"/>
