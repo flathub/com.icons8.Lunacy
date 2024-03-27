@@ -74,6 +74,14 @@
   </screenshots>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="9.5.0" date="2024-03-19">
+      <description>
+        <p>FREE format</p>
+        <p>The default file format in Lunacy is now <code>.free</code>, which is almost fully compatible with the features from the Figma and Sketch formats. We designed <code>.free</code> to address the issues available in <code>.sketch</code> when it comes to very large design files.</p>
+        <p>Lunacy still supports <code>.sketch</code> like no other app, except Sketch itself. But for better experience with Lunacy, we recommend using <code>.free</code>.</p>
+        <p>You can easily convert between the formats using the "Save as" option.</p>
+      </description>
+    </release>
     <release version="9.4.2.5022" date="2024-02-08"/>
     <release version="9.4.1" date="2024-02-03"/>
     <release version="9.3.3" date="2023-12-28"/>
