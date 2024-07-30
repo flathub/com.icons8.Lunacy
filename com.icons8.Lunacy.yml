@@ -41,9 +41,9 @@ modules:
     sources:
       - type: extra-data
         filename: Lunacy.deb
-        url: https://lcdn.icons8.com/setup/Lunacy_9.6.2.deb
-        sha256: 8939defaf527bfe3bff9050a81252bf8009d6695ebbd1424666aa08491f57c3c
-        size: 84102948
+        url: https://lcdn.icons8.com/setup/Lunacy_9.6.1.deb
+        sha256: c3bab0e47c897048deba3cf9e1b4e49287e6cda70804b62a26f56e95dbdbcad1
+        size: 84114004
         only-arches:
           - x86_64
         x-checker-data:
