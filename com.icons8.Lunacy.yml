@@ -41,6 +41,7 @@ modules:
       - install -Dm644 -t ${FLATPAK_DEST}/share/metainfo com.icons8.Lunacy.metainfo.xml
 
     sources:
+      # Source for x86_64 architecture
       - type: extra-data
         filename: Lunacy.deb
         url: https://lcdn.icons8.com/setup/Lunacy_10.11.deb
@@ -51,8 +52,22 @@ modules:
         x-checker-data:
           type: html
           url: https://docs.icons8.com/release-notes
-          pattern: (https://\S+/setup/Lunacy_([0-9.]+).deb)
+          pattern: (https://\S+/setup/Lunacy_([0-9.]+)\.deb)
           is-main-source: true
+      
+      # Source for aarch64 architecture
+      - type: extra-data
+        filename: Lunacy.deb
+        url: https://lcdn.icons8.com/setup/Lunacy.ARM.deb
+        sha256: bea5abc8712e15c02f592cac4dde12c3acf7f68f38776d1d722e5657e38cf769
+        size: 59079000
+        only-arches:
+          - aarch64
+        x-checker-data:
+          type: html
+          url: https://docs.icons8.com/release-notes
+          pattern: (https://\S+/setup/Lunacy\.ARM\.deb)
+          is-main-source: false      
 
       - type: script
         dest-filename: apply_extra
