@@ -44,9 +44,9 @@ modules:
       # Source for x86_64 architecture
       - type: extra-data
         filename: Lunacy.deb
-        url: https://lcdn.icons8.com/setup/Lunacy_10.11.deb
-        sha256: c914e9db750849605b06403d61abd8723a98314d118a33322ce0a8624e3d271a
-        size: 64990432
+        url: https://lcdn.icons8.com/setup/Lunacy_11.0.deb
+        sha256: fbe50988906c6fecb02ce566994b7f6197b7c9a745ffc64b2009a6eacca0710d
+        size: 64579264
         only-arches:
           - x86_64
         x-checker-data:
@@ -54,7 +54,7 @@ modules:
           url: https://docs.icons8.com/release-notes
           pattern: (https://\S+/setup/Lunacy_([0-9.]+)\.deb)
           is-main-source: true
-      
+
       # Source for aarch64 architecture
       - type: extra-data
         filename: Lunacy.deb
@@ -67,7 +67,7 @@ modules:
           type: html
           url: https://docs.icons8.com/release-notes
           pattern: (https://\S+/setup/Lunacy\.ARM\.deb)
-          is-main-source: false      
+          is-main-source: false
 
       - type: script
         dest-filename: apply_extra
