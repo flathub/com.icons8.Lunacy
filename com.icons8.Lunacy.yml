@@ -15,7 +15,7 @@ finish-args:
   - --socket=pulseaudio
   - --socket=x11
   # It is needed for the correct operation of settings saving under Wayland.
-  - --filesystem=home
+  - --filesystem=~/.local/share/Icons8/Lunacy
   - --filesystem=xdg-download
   - --filesystem=xdg-documents
   - --filesystem=xdg-run/gvfs
