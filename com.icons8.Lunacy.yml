@@ -59,8 +59,8 @@ modules:
       - type: extra-data
         filename: Lunacy.deb
         url: https://lcdn.icons8.com/setup/Lunacy.ARM.deb
-        sha256: bea5abc8712e15c02f592cac4dde12c3acf7f68f38776d1d722e5657e38cf769
-        size: 59079000
+        sha256: 6d639e1dee5d860ff90140b1254e3d7062ea944b15990d438a70b80c7d4532bb
+        size: 57823844
         only-arches:
           - aarch64
         x-checker-data:
