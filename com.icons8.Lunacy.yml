@@ -58,9 +58,9 @@ modules:
       # Source for aarch64 architecture
       - type: extra-data
         filename: Lunacy.deb
-        url: https://lcdn.icons8.com/setup/lunacy_11.3_arm64.deb
-        sha256: 3c9e636c09215ce0d389f8c743c969c574da8ef7e61949742cfe973fea24b6ee
-        size: 55636812
+        url: https://lcdn.icons8.com/setup/lunacy_11.4_arm64.deb
+        sha256: 0cdf12f609cca75c862a5164d1bc750f2c6d57789a35258e9e941e097ffb1022
+        size: 55655156
         only-arches:
           - aarch64
         x-checker-data:
