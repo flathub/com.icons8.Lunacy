@@ -1,0 +1,246 @@
+name: Update Lunacy
+
+on:
+  schedule:
+    # Run daily at 12:00 UTC
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4 pyyaml
+
+      - name: Check for updates and update manifest
+        id: update
+        run: |
+          python3 << 'EOF'
+          import requests
+          import re
+          import yaml
+          import hashlib
+          import os
+          from bs4 import BeautifulSoup
+
+          # Get release notes page
+          response = requests.get('https://docs.icons8.com/release-notes')
+          soup = BeautifulSoup(response.text, 'html.parser')
+
+          # Extract latest version using the existing pattern
+          pattern = r'https://\S+/setup/Lunacy_([0-9.]+)\.deb'
+          matches = re.findall(pattern, response.text)
+          
+          if not matches:
+              print("No version found")
+              exit(0)
+              
+          latest_version = matches[0]
+          print(f"Latest version: {latest_version}")
+
+          # Extract release notes for this version (optional, don't fail if it doesn't work)
+          def extract_release_notes(version):
+              """Extract release notes for specific version - fail silently if structure changes"""
+              try:
+                  # Find heading with version number
+                  for heading in soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']):
+                      if version in heading.get_text():
+                          # Get the list of changes after the heading
+                          next_elem = heading
+                          # Skip release date and download links, find <ul>
+                          for _ in range(5):  # Check more siblings
+                              next_elem = next_elem.find_next_sibling()
+                              if next_elem and next_elem.name == 'ul':
+                                  break
+                          
+                          # Check if we found <ul> with changes
+                          if next_elem and next_elem.name == 'ul':
+                              changes = []
+                              for li in next_elem.find_all('li'):
+                                  change_text = li.get_text().strip()
+                                  if change_text:
+                                      changes.append(change_text)
+                              if changes:
+                                  return changes
+                  return []
+              except Exception as e:
+                  print(f"Warning: Could not extract release notes (non-critical): {e}")
+                  return []
+
+          release_notes = extract_release_notes(latest_version)
+          if release_notes:
+              print(f"Successfully extracted {len(release_notes)} release notes for {latest_version}")
+          else:
+              print(f"No release notes found for {latest_version} (will proceed with update anyway)")
+
+          # Load current manifest
+          with open('com.icons8.Lunacy.yml', 'r') as f:
+              manifest = yaml.safe_load(f)
+
+          # Find current version
+          x64_source = None
+          arm64_source = None
+          
+          for source in manifest['modules'][0]['sources']:
+              if source.get('type') == 'extra-data':
+                  if source.get('only-arches') == ['x86_64']:
+                      x64_source = source
+                  elif source.get('only-arches') == ['aarch64']:
+                      arm64_source = source
+
+          if not x64_source or not arm64_source:
+              print("Could not find sources")
+              exit(1)
+
+          # Extract current version from x64 URL
+          current_match = re.search(r'Lunacy_([0-9.]+)\.deb', x64_source['url'])
+          if not current_match:
+              print("Could not extract current version")
+              exit(1)
+              
+          current_version = current_match.group(1)
+          print(f"Current version: {current_version}")
+
+          if current_version == latest_version:
+              print("Already up to date")
+              exit(0)
+
+          # Build new URLs
+          x64_url = f"https://lcdn.icons8.com/setup/Lunacy_{latest_version}.deb"
+          arm64_url = f"https://lcdn.icons8.com/setup/lunacy_{latest_version}_arm64.deb"
+
+          def get_file_info(url):
+              """Download file and get size and hash"""
+              print(f"Downloading {url}")
+              response = requests.get(url, stream=True)
+              if response.status_code != 200:
+                  raise Exception(f"Failed to download {url}: {response.status_code}")
+              
+              content = response.content
+              size = len(content)
+              sha256 = hashlib.sha256(content).hexdigest()
+              return size, sha256
+
+          # CRITICAL: Get file info for both architectures - this must work
+          try:
+              x64_size, x64_sha256 = get_file_info(x64_url)
+              arm64_size, arm64_sha256 = get_file_info(arm64_url)
+              
+              print(f"SUCCESS: Downloaded and verified both architectures")
+              print(f"x64: size={x64_size}, sha256={x64_sha256}")
+              print(f"arm64: size={arm64_size}, sha256={arm64_sha256}")
+
+          except Exception as e:
+              print(f"CRITICAL ERROR: Failed to download/verify files: {e}")
+              exit(1)
+
+          # CRITICAL: Update manifest - this must work
+          try:
+              x64_source['url'] = x64_url
+              x64_source['sha256'] = x64_sha256
+              x64_source['size'] = x64_size
+
+              arm64_source['url'] = arm64_url
+              arm64_source['sha256'] = arm64_sha256
+              arm64_source['size'] = arm64_size
+
+              # Write updated manifest
+              with open('com.icons8.Lunacy.yml', 'w') as f:
+                  yaml.dump(manifest, f, default_flow_style=False, sort_keys=False, indent=2)
+              
+              print("SUCCESS: Updated manifest with new URLs, hashes and sizes")
+
+          except Exception as e:
+              print(f"CRITICAL ERROR: Failed to update manifest: {e}")
+              exit(1)
+
+          # OPTIONAL: Update metainfo.xml with release notes - can fail without breaking update
+          def update_metainfo(version, changes):
+              """Update metainfo.xml with new release information - fail silently if it doesn't work"""
+              try:
+                  import xml.etree.ElementTree as ET
+                  
+                  tree = ET.parse('com.icons8.Lunacy.metainfo.xml')
+                  root = tree.getroot()
+                  
+                  releases = root.find('releases')
+                  if releases is None:
+                      return False
+                  
+                  for release in releases.findall('release'):
+                      if release.get('version') == version:
+                          description = release.find('description')
+                          if description is not None:
+                              description.clear()
+                              description.text = None
+                              description.tail = None
+                              
+                              if changes:
+                                  ul = ET.SubElement(description, 'ul')
+                                  for change in changes:
+                                      li = ET.SubElement(ul, 'li')
+                                      li.text = change
+                              else:
+                                  description.text = "Update with bug fixes and improvements."
+                              
+                              tree.write('com.icons8.Lunacy.metainfo.xml', 
+                                       encoding='UTF-8', xml_declaration=True)
+                              return True
+                  return False
+              except Exception:
+                  return False
+          
+          metainfo_updated = update_metainfo(latest_version, release_notes)
+          if metainfo_updated:
+              print("BONUS: Successfully updated metainfo.xml with release notes")
+          else:
+              print("WARNING: Could not update metainfo.xml (non-critical)")
+
+          # Set output for next step
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"updated=true\n")
+              f.write(f"version={latest_version}\n")
+              f.write(f"current_version={current_version}\n")
+              f.write(f"metainfo_updated={metainfo_updated}\n")
+
+          print(f"SUCCESS: Update completed for version {latest_version}")
+          EOF
+
+      - name: Create Pull Request
+        if: steps.update.outputs.updated == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update Lunacy to version ${{ steps.update.outputs.version }}"
+          title: "Update Lunacy to version ${{ steps.update.outputs.version }}"
+          body: |
+            ## Update Lunacy
+
+            - **Current version**: ${{ steps.update.outputs.current_version }}
+            - **New version**: ${{ steps.update.outputs.version }}
+
+            This PR updates both x86_64 and aarch64 architectures with correct hashes and file sizes.
+
+            ### Changes
+            - ✅ Updated Lunacy.deb URLs for both architectures
+            - ✅ Updated SHA256 checksums  
+            - ✅ Updated file sizes
+            - Release description: ${{ steps.update.outputs.metainfo_updated == 'true' && '✅ Updated with detailed changelog' || '⚠️ Generic description (changelog extraction failed)' }}
+
+            **Note**: The core update (URLs, hashes, sizes) always succeeds. Release description update is a bonus feature that may fail if the release notes page structure changes.
+
+            Auto-generated by GitHub Actions.
+          branch: update-lunacy-${{ steps.update.outputs.version }}
+          delete-branch: true
