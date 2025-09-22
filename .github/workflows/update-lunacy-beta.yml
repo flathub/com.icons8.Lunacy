@@ -1,0 +1,211 @@
+name: Update Lunacy Beta
+
+on:
+  schedule:
+    # Run every 6 hours at minute 0
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: beta
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install requests pyyaml
+
+      - name: Check for beta updates and update manifest
+        id: update
+        run: |
+          python3 << 'EOF'
+          import requests
+          import re
+          import yaml
+          import hashlib
+          import os
+          from datetime import datetime
+
+          # Beta URLs
+          BETA_X64_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.deb"
+          BETA_ARM_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.Arm.deb"  # Currently not available
+
+          def get_deb_version(deb_url):
+              """Download deb file and extract version using dpkg-deb"""
+              try:
+                  print(f"Downloading {deb_url} to check version...")
+                  response = requests.get(deb_url, stream=True)
+                  if response.status_code != 200:
+                      print(f"Failed to download {deb_url}: {response.status_code}")
+                      return None
+                  
+                  # Save to temporary file
+                  with open('/tmp/beta_lunacy.deb', 'wb') as f:
+                      f.write(response.content)
+                  
+                  # Get version using dpkg-deb
+                  import subprocess
+                  result = subprocess.run(['dpkg-deb', '-f', '/tmp/beta_lunacy.deb', 'Version'], 
+                                        capture_output=True, text=True)
+                  if result.returncode == 0:
+                      version = result.stdout.strip()
+                      print(f"Found version: {version}")
+                      return version
+                  else:
+                      print(f"Failed to get version: {result.stderr}")
+                      return None
+              except Exception as e:
+                  print(f"Error getting version from {deb_url}: {e}")
+                  return None
+
+          def get_file_info(url):
+              """Download file and get size and hash"""
+              print(f"Downloading {url}")
+              response = requests.get(url, stream=True)
+              if response.status_code != 200:
+                  raise Exception(f"Failed to download {url}: {response.status_code}")
+              
+              content = response.content
+              size = len(content)
+              sha256 = hashlib.sha256(content).hexdigest()
+              return size, sha256
+
+          # Get current beta version
+          current_version = get_deb_version(BETA_X64_URL)
+          if not current_version:
+              print("Could not get current beta version")
+              exit(1)
+
+          # Load current manifest
+          with open('com.icons8.Lunacy.yml', 'r') as f:
+              manifest = yaml.safe_load(f)
+
+          # Find current version in manifest
+          x64_source = None
+          for source in manifest['modules'][0]['sources']:
+              if source.get('type') == 'extra-data' and source.get('only-arches') == ['x86_64']:
+                  x64_source = source
+                  break
+
+          if not x64_source:
+              print("Could not find x64 source in manifest")
+              exit(1)
+
+          # Extract version from current URL to compare
+          current_url = x64_source['url']
+          print(f"Current URL in manifest: {current_url}")
+
+          # Check if we need to update (compare versions)
+          # For now, we'll always update to ensure we have the latest beta
+          print(f"Latest beta version: {current_version}")
+          print("Checking for updates...")
+
+          try:
+              # Get file info for x64 beta
+              x64_size, x64_sha256 = get_file_info(BETA_X64_URL)
+              print(f"x64 beta: size={x64_size}, sha256={x64_sha256}")
+
+              # Update manifest
+              x64_source['url'] = BETA_X64_URL
+              x64_source['sha256'] = x64_sha256
+              x64_source['size'] = x64_size
+
+              # Write updated manifest
+              with open('com.icons8.Lunacy.yml', 'w') as f:
+                  yaml.dump(manifest, f, default_flow_style=False, sort_keys=False, indent=2)
+              
+              print("SUCCESS: Updated manifest with new beta URLs, hashes and sizes")
+
+          except Exception as e:
+              print(f"CRITICAL ERROR: Failed to update manifest: {e}")
+              exit(1)
+
+          # Update metainfo.xml with beta version
+          def update_metainfo_beta(version):
+              try:
+                  import xml.etree.ElementTree as ET
+                  
+                  tree = ET.parse('com.icons8.Lunacy.metainfo.xml')
+                  root = tree.getroot()
+                  
+                  releases = root.find('releases')
+                  if releases is None:
+                      return False
+                  
+                  # Check if this version already exists
+                  version_exists = False
+                  for release in releases.findall('release'):
+                      if release.get('version') == version:
+                          version_exists = True
+                          break
+                  
+                  if not version_exists:
+                      # Add new beta release
+                      today = datetime.now().strftime('%Y-%m-%d')
+                      new_release = ET.SubElement(releases, 'release')
+                      new_release.set('version', version)
+                      new_release.set('date', today)
+                      
+                      description = ET.SubElement(new_release, 'description')
+                      p = ET.SubElement(description, 'p')
+                      p.text = f"Beta release of Lunacy {version} with new features and improvements."
+                      
+                      ul = ET.SubElement(description, 'ul')
+                      li1 = ET.SubElement(ul, 'li')
+                      li1.text = "Latest beta version with cutting-edge features"
+                      li2 = ET.SubElement(ul, 'li')
+                      li2.text = "Performance improvements and bug fixes"
+                      li3 = ET.SubElement(ul, 'li')
+                      li3.text = "Available only for x86_64 architecture"
+                      
+                      tree.write('com.icons8.Lunacy.metainfo.xml', 
+                               encoding='UTF-8', xml_declaration=True)
+                      return True
+                  else:
+                      print(f"Version {version} already exists in metainfo")
+                      return False
+              except Exception as e:
+                  print(f"Error updating metainfo: {e}")
+                  return False
+
+          metainfo_updated = update_metainfo_beta(current_version)
+          if metainfo_updated:
+              print("SUCCESS: Updated metainfo.xml with new beta release")
+          else:
+              print("INFO: Metainfo already up to date")
+
+          # Set output for next step
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"updated=true\n")
+              f.write(f"version={current_version}\n")
+              f.write(f"metainfo_updated={metainfo_updated}\n")
+
+          print(f"SUCCESS: Beta update completed for version {current_version}")
+          EOF
+
+      - name: Commit and push changes
+        if: steps.update.outputs.updated == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add com.icons8.Lunacy.yml com.icons8.Lunacy.metainfo.xml
+          git diff --staged --quiet || git commit -m "Update Lunacy Beta to version ${{ steps.update.outputs.version }}
+
+          - Updated beta URLs and checksums
+          - Version: ${{ steps.update.outputs.version }}
+          - Metainfo: ${{ steps.update.outputs.metainfo_updated == 'true' && 'Updated' || 'No changes' }}
+
+          Auto-generated by GitHub Actions."
+          git push origin beta
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
