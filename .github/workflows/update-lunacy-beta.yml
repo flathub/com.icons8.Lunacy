@@ -38,7 +38,7 @@ jobs:
 
           # Beta URLs
           BETA_X64_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.deb"
-          BETA_ARM_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.Arm.deb"  # Currently not available
+          BETA_ARM_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb"
 
           def get_deb_version(deb_url):
               """Download deb file and extract version using dpkg-deb"""
@@ -90,12 +90,15 @@ jobs:
           with open('com.icons8.Lunacy.yml', 'r') as f:
               manifest = yaml.safe_load(f)
 
-          # Find current version in manifest
+          # Find current versions in manifest
           x64_source = None
+          arm64_source = None
           for source in manifest['modules'][0]['sources']:
-              if source.get('type') == 'extra-data' and source.get('only-arches') == ['x86_64']:
-                  x64_source = source
-                  break
+              if source.get('type') == 'extra-data':
+                  if source.get('only-arches') == ['x86_64']:
+                      x64_source = source
+                  elif source.get('only-arches') == ['aarch64']:
+                      arm64_source = source
 
           if not x64_source:
               print("Could not find x64 source in manifest")
@@ -115,10 +118,23 @@ jobs:
               x64_size, x64_sha256 = get_file_info(BETA_X64_URL)
               print(f"x64 beta: size={x64_size}, sha256={x64_sha256}")
 
-              # Update manifest
+              # Update x64 manifest
               x64_source['url'] = BETA_X64_URL
               x64_source['sha256'] = x64_sha256
               x64_source['size'] = x64_size
+
+              # Get file info for ARM beta if available
+              if arm64_source:
+                  try:
+                      arm64_size, arm64_sha256 = get_file_info(BETA_ARM_URL)
+                      print(f"ARM64 beta: size={arm64_size}, sha256={arm64_sha256}")
+                      
+                      # Update ARM64 manifest
+                      arm64_source['url'] = BETA_ARM_URL
+                      arm64_source['sha256'] = arm64_sha256
+                      arm64_source['size'] = arm64_size
+                  except Exception as e:
+                      print(f"WARNING: Could not update ARM64 beta: {e}")
 
               # Write updated manifest
               with open('com.icons8.Lunacy.yml', 'w') as f:
@@ -166,7 +182,7 @@ jobs:
                       li2 = ET.SubElement(ul, 'li')
                       li2.text = "Performance improvements and bug fixes"
                       li3 = ET.SubElement(ul, 'li')
-                      li3.text = "Available only for x86_64 architecture"
+                      li3.text = "Available for both x86_64 and aarch64 architectures"
                       
                       tree.write('com.icons8.Lunacy.metainfo.xml', 
                                encoding='UTF-8', xml_declaration=True)

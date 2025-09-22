@@ -80,7 +80,7 @@
         <ul>
           <li>Latest beta version with cutting-edge features</li>
           <li>Performance improvements and bug fixes</li>
-          <li>Available only for x86_64 architecture</li>
+          <li>Available for both x86_64 and aarch64 architectures</li>
         </ul>
       </description>
     </release>
