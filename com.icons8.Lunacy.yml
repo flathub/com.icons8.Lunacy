@@ -13,9 +13,11 @@ finish-args:
   - --share=ipc
   - --socket=cups
   - --socket=pulseaudio
+  - --socket=wayland
   - --socket=x11
-  # It is needed for the correct operation of settings saving under Wayland.
-  - --filesystem=~/.local/share
+  # More specific filesystem access for settings and cache
+  - --filesystem=~/.local/share/Icons8:Lunacy
+  - --filesystem=~/.local/share/flatpak/overrides/com.icons8.Lunacy:create
   - --filesystem=xdg-download
   - --filesystem=xdg-documents
   - --filesystem=xdg-run/gvfs
@@ -23,6 +25,8 @@ finish-args:
   - --talk-name=org.gtk.vfs.*
   # Network needed for remote asset importing
   - --share=network
+  # Environment variables for better Wayland support
+  - --env=XCURSOR_PATH=/run/host/user-share/icons:/run/host/share/icons
 
 modules:
   - name: lunacy
