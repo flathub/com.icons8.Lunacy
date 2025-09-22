@@ -15,7 +15,7 @@ finish-args:
   - --socket=pulseaudio
   - --socket=x11
   # It is needed for the correct operation of settings saving under Wayland.
-  #- --filesystem=~/.local/share
+  # - --filesystem=~/.local/share
   - --filesystem=xdg-download
   - --filesystem=xdg-documents
   - --filesystem=xdg-run/gvfs
@@ -41,12 +41,12 @@ modules:
       - install -Dm644 -t ${FLATPAK_DEST}/share/metainfo com.icons8.Lunacy.metainfo.xml
 
     sources:
-      # Source for x86_64 architecture (BETA)
+      # Source for x86_64 architecture
       - type: extra-data
         filename: Lunacy.deb
-        url: https://lcdn.icons8.com/setup/beta/Lunacy.deb
-        sha256: c39791ac3110c85f0aefee636ce144f1f79f1651402f7734ce9812e29b12c34d
-        size: 63260728
+        url: https://lcdn.icons8.com/setup/Lunacy_11.6.deb
+        sha256: 543776a813630b27cecb7bd915a55cdc123cce1426cc4231603370b3b0c86027
+        size: 63084724
         only-arches:
           - x86_64
         x-checker-data:
@@ -55,12 +55,12 @@ modules:
           pattern: (https://\S+/setup/Lunacy_([0-9.]+)\.deb)
           is-main-source: true
 
-      # Source for aarch64 architecture (BETA)
+      # Source for aarch64 architecture
       - type: extra-data
         filename: Lunacy.deb
-        url: https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb
-        sha256: 199f63e4ea6251888b916891e6719b1b61be26a5aa81a797b043b38fc29f9225
-        size: 56132692
+        url: https://lcdn.icons8.com/setup/lunacy_11.6_arm64.deb
+        sha256: fb99c38cf55357679af93c38e87b008c87530bbaf708fa4a6b356d98e2287f3d
+        size: 55915304
         only-arches:
           - aarch64
         x-checker-data:
