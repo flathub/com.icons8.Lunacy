@@ -1,4 +1,4 @@
-app-id: com.icons8.Lunacy
+app-id: com.icons8.Lunacy.Beta
 runtime: org.freedesktop.Platform
 runtime-version: '23.08'
 sdk: org.freedesktop.Sdk
@@ -14,8 +14,8 @@ finish-args:
   - --socket=cups
   - --socket=pulseaudio
   - --socket=x11
-  # It is needed for the correct operation of settings saving under Wayland.
-  # - --filesystem=~/.local/share
+  # Access to Icons8 settings directory only (instead of entire ~/.local/share)
+  - --filesystem=~/.local/share/Icons8
   - --filesystem=xdg-download
   - --filesystem=xdg-documents
   - --filesystem=xdg-run/gvfs
@@ -39,10 +39,10 @@ modules:
       - tar xf data.tar.xz --no-same-owner
       - cp -r opt/icons8/lunacy/* ${FLATPAK_DEST}/
       - rm -rf control.tar.xz data.tar.xz debian-binary Lunacy.deb opt
-      - install -D -t ${FLATPAK_DEST}/share/applications com.icons8.Lunacy.desktop
-      - install -D -t ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps com.icons8.Lunacy.svg
-      - install -D -t ${FLATPAK_DEST}/share/icons/hicolor/128x128/apps com.icons8.Lunacy.png
-      - install -Dm644 -t ${FLATPAK_DEST}/share/metainfo com.icons8.Lunacy.metainfo.xml
+      - install -D com.icons8.Lunacy.Beta.desktop ${FLATPAK_DEST}/share/applications/com.icons8.Lunacy.Beta.desktop
+      - install -D com.icons8.Lunacy.Beta.svg ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/com.icons8.Lunacy.Beta.svg
+      - install -D com.icons8.Lunacy.Beta.png ${FLATPAK_DEST}/share/icons/hicolor/128x128/apps/com.icons8.Lunacy.Beta.png
+      - install -Dm644 com.icons8.Lunacy.Beta.metainfo.xml ${FLATPAK_DEST}/share/metainfo/com.icons8.Lunacy.Beta.metainfo.xml
 
     sources:
       # Source for x86_64 architecture (BETA) - downloaded at build time
@@ -65,14 +65,14 @@ modules:
         path: lunacy
 
       - type: file
-        path: com.icons8.Lunacy.metainfo.xml
+        path: com.icons8.Lunacy.Beta.metainfo.xml
 
       - type: file
-        path: com.icons8.Lunacy.desktop
+        path: com.icons8.Lunacy.Beta.desktop
 
       # Icon is from https://icons8.com/vue-static/landings/lunacy-new/lunacy.svg
       - type: file
-        path: com.icons8.Lunacy.svg
+        path: com.icons8.Lunacy.Beta.svg
 
       - type: file
-        path: com.icons8.Lunacy.png
+        path: com.icons8.Lunacy.Beta.png

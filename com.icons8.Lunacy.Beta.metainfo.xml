@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>com.icons8.Lunacy</id>
-  <name>Lunacy</name>
+  <id>com.icons8.Lunacy.Beta</id>
+  <name>Lunacy Beta</name>
   <summary>Free graphic design tool for UX/UI</summary>
   <developer id="icons8.com">
     <name translatable="no">Icons8</name>
@@ -29,7 +29,7 @@
   <url type="homepage">https://icons8.com/lunacy</url>
   <url type="bugtracker">https://community.icons8.com/c/lunacy/7</url>
   <url type="contact">https://lunacy.docs.icons8.com/contact/</url>
-  <launchable type="desktop-id">com.icons8.Lunacy.desktop</launchable>
+  <launchable type="desktop-id">com.icons8.Lunacy.Beta.desktop</launchable>
   <screenshots>
     <screenshot type="default">
       <image>https://cloud.icons8.com/public.php/dav/files/3Ax2zZ5bMbScyZB/Build%20projects%20beyond%20imagination.png</image>

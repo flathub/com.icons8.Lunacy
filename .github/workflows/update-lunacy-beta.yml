@@ -90,7 +90,7 @@ jobs:
               exit(1)
 
           # Load current manifest
-          with open('com.icons8.Lunacy.yml', 'r') as f:
+          with open('com.icons8.Lunacy.Beta.yml', 'r') as f:
               manifest = yaml.safe_load(f)
 
           # Find current versions in manifest  
@@ -155,7 +155,7 @@ jobs:
                       print(f"Updated ARM64: sha256={remote_arm64_hash}")
                   
                   # Write updated manifest
-                  with open('com.icons8.Lunacy.yml', 'w') as f:
+                  with open('com.icons8.Lunacy.Beta.yml', 'w') as f:
                       yaml.dump(manifest, f, default_flow_style=False, sort_keys=False, indent=2)
                   
                   print("SUCCESS: Updated manifest with new beta hashes")
@@ -173,7 +173,7 @@ jobs:
               try:
                   import xml.etree.ElementTree as ET
                   
-                  tree = ET.parse('com.icons8.Lunacy.metainfo.xml')
+                   tree = ET.parse('com.icons8.Lunacy.Beta.metainfo.xml')
                   root = tree.getroot()
                   
                   releases = root.find('releases')
@@ -206,8 +206,8 @@ jobs:
                       li3 = ET.SubElement(ul, 'li')
                       li3.text = "Bundled at build time - no download during installation"
                       
-                      tree.write('com.icons8.Lunacy.metainfo.xml', 
-                               encoding='UTF-8', xml_declaration=True)
+                       tree.write('com.icons8.Lunacy.Beta.metainfo.xml', 
+                                encoding='UTF-8', xml_declaration=True)
                       return True
                   else:
                       print(f"Version {version} already exists in metainfo")
@@ -238,7 +238,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add com.icons8.Lunacy.yml com.icons8.Lunacy.metainfo.xml
+          git add com.icons8.Lunacy.Beta.yml com.icons8.Lunacy.Beta.metainfo.xml
           git diff --staged --quiet || git commit -m "Update Lunacy Beta to version ${{ steps.update.outputs.version }}
 
           - Version: ${{ steps.update.outputs.version }}
