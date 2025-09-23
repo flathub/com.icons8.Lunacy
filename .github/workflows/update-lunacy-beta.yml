@@ -156,7 +156,7 @@ jobs:
                   with open('com.icons8.Lunacy.yml', 'w') as f:
                       yaml.dump(manifest, f, default_flow_style=False, sort_keys=False, indent=2)
                   
-                      print("SUCCESS: Updated manifest with new beta hashes")
+                  print("SUCCESS: Updated manifest with new beta hashes")
                   manifest_updated = True
               else:
                   print("No changes detected - files are up to date")
@@ -202,7 +202,7 @@ jobs:
                       li2 = ET.SubElement(ul, 'li')
                       li2.text = "Performance improvements and bug fixes"
                       li3 = ET.SubElement(ul, 'li')
-                       li3.text = "Bundled at build time - no download during installation"
+                      li3.text = "Bundled at build time - no download during installation"
                       
                       tree.write('com.icons8.Lunacy.metainfo.xml', 
                                encoding='UTF-8', xml_declaration=True)
