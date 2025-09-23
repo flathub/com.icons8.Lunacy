@@ -8,6 +8,8 @@ on:
 
 jobs:
   update:
+    # Only run on the original flathub repository, not on forks
+    if: github.repository == 'flathub/com.icons8.Lunacy'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
