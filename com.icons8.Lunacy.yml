@@ -14,8 +14,7 @@ finish-args:
   - --socket=cups
   - --socket=pulseaudio
   - --socket=x11
-  # It is needed for the correct operation of settings saving under 
-Wayland.
+  # It is needed for the correct operation of settings saving under Wayland.
   # - --filesystem=~/.local/share
   - --filesystem=xdg-download
   - --filesystem=xdg-documents
@@ -33,26 +32,20 @@ modules:
       - install -D lunacy ${FLATPAK_DEST}/bin/lunacy
       - install -D /usr/bin/ar -t ${FLATPAK_DEST}/bin
       - mkdir -p ${FLATPAK_DEST}/lib
-      - ARCH_TRIPLE=$(gcc --print-multiarch) && cp 
-/usr/lib/${ARCH_TRIPLE}/libbfd-*.so
+      - ARCH_TRIPLE=$(gcc --print-multiarch) && cp /usr/lib/${ARCH_TRIPLE}/libbfd-*.so
         ${FLATPAK_DEST}/lib
       - install -D apply_extra ${FLATPAK_DEST}/bin/apply_extra
-      - install -D -t ${FLATPAK_DEST}/share/applications 
-com.icons8.Lunacy.desktop
-      - install -D -t ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps 
-com.icons8.Lunacy.svg
-      - install -D -t ${FLATPAK_DEST}/share/icons/hicolor/128x128/apps 
-com.icons8.Lunacy.png
-      - install -Dm644 -t ${FLATPAK_DEST}/share/metainfo 
-com.icons8.Lunacy.metainfo.xml
+      - install -D -t ${FLATPAK_DEST}/share/applications com.icons8.Lunacy.desktop
+      - install -D -t ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps com.icons8.Lunacy.svg
+      - install -D -t ${FLATPAK_DEST}/share/icons/hicolor/128x128/apps com.icons8.Lunacy.png
+      - install -Dm644 -t ${FLATPAK_DEST}/share/metainfo com.icons8.Lunacy.metainfo.xml
 
     sources:
       # Source for x86_64 architecture (BETA)
       - type: extra-data
         filename: Lunacy.deb
         url: https://lcdn.icons8.com/setup/beta/Lunacy.deb
-        sha256: 
-da4ed5cfef8c67d027e950188f98fb491fd4440fa5d760580751d88bc32533c6
+        sha256: da4ed5cfef8c67d027e950188f98fb491fd4440fa5d760580751d88bc32533c6
         size: 63209184
         only-arches:
           - x86_64
@@ -66,8 +59,7 @@ da4ed5cfef8c67d027e950188f98fb491fd4440fa5d760580751d88bc32533c6
       - type: extra-data
         filename: Lunacy.deb
         url: https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb
-        sha256: 
-7b4ac7ef1c5981ea98a97f488ec8bd5db56447aedf77250f38e212c3a7a699e3
+        sha256: 7b4ac7ef1c5981ea98a97f488ec8bd5db56447aedf77250f38e212c3a7a699e3
         size: 56155448
         only-arches:
           - aarch64
@@ -94,8 +86,7 @@ da4ed5cfef8c67d027e950188f98fb491fd4440fa5d760580751d88bc32533c6
       - type: file
         path: com.icons8.Lunacy.desktop
 
-      # Icon is from 
-https://icons8.com/vue-static/landings/lunacy-new/lunacy.svg
+      # Icon is from https://icons8.com/vue-static/landings/lunacy-new/lunacy.svg
       - type: file
         path: com.icons8.Lunacy.svg
 

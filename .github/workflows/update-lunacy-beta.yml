@@ -38,8 +38,7 @@ jobs:
 
           # Beta URLs
           BETA_X64_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.deb"
-          BETA_ARM_URL = 
-"https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb"
+          BETA_ARM_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb"
 
           def get_deb_version(deb_url):
               """Download deb file and extract version using dpkg-deb"""
@@ -47,8 +46,7 @@ jobs:
                   print(f"Downloading {deb_url} to check version...")
                   response = requests.get(deb_url, stream=True)
                   if response.status_code != 200:
-                      print(f"Failed to download {deb_url}: 
-{response.status_code}")
+                      print(f"Failed to download {deb_url}: {response.status_code}")
                       return None
                   
                   # Save to temporary file
@@ -57,8 +55,7 @@ jobs:
                   
                   # Get version using dpkg-deb
                   import subprocess
-                  result = subprocess.run(['dpkg-deb', '-f', 
-'/tmp/beta_lunacy.deb', 'Version'], 
+                  result = subprocess.run(['dpkg-deb', '-f', '/tmp/beta_lunacy.deb', 'Version'], 
                                         capture_output=True, text=True)
                   if result.returncode == 0:
                       version = result.stdout.strip()
@@ -72,13 +69,11 @@ jobs:
                   return None
 
           def get_remote_file_hash(url):
-              """Get SHA256 hash of remote file without downloading 
-fully"""
+              """Get SHA256 hash of remote file without downloading fully"""
               print(f"Checking hash for {url}")
               response = requests.get(url, stream=True)
               if response.status_code != 200:
-                  raise Exception(f"Failed to download {url}: 
-{response.status_code}")
+                  raise Exception(f"Failed to download {url}: {response.status_code}")
               
               sha256_hash = hashlib.sha256()
               for chunk in response.iter_content(chunk_size=8192):
@@ -134,15 +129,12 @@ fully"""
               if arm64_source:
                   try:
                       current_arm64_hash = arm64_source.get('sha256', '')
-                      remote_arm64_hash = 
-get_remote_file_hash(BETA_ARM_URL)
+                      remote_arm64_hash = get_remote_file_hash(BETA_ARM_URL)
                       
-                      print(f"Current ARM64 hash in manifest: 
-{current_arm64_hash}")
+                      print(f"Current ARM64 hash in manifest: {current_arm64_hash}")
                       print(f"Remote ARM64 hash: {remote_arm64_hash}")
                       
-                      arm64_needs_update = current_arm64_hash != 
-remote_arm64_hash
+                      arm64_needs_update = current_arm64_hash != remote_arm64_hash
                   except Exception as e:
                       print(f"WARNING: Could not check ARM64 beta: {e}")
               
@@ -153,32 +145,26 @@ remote_arm64_hash
                   if x64_needs_update:
                       # Get file size for x64
                       response = requests.head(BETA_X64_URL)
-                      x64_size = 
-int(response.headers.get('content-length', 0))
+                      x64_size = int(response.headers.get('content-length', 0))
                       
                       x64_source['sha256'] = remote_x64_hash
                       x64_source['size'] = x64_size
-                      print(f"Updated x64: size={x64_size}, 
-sha256={remote_x64_hash}")
+                      print(f"Updated x64: size={x64_size}, sha256={remote_x64_hash}")
                   
                   if arm64_needs_update and arm64_source:
                       # Get file size for ARM64
                       response = requests.head(BETA_ARM_URL)
-                      arm64_size = 
-int(response.headers.get('content-length', 0))
+                      arm64_size = int(response.headers.get('content-length', 0))
                       
                       arm64_source['sha256'] = remote_arm64_hash
                       arm64_source['size'] = arm64_size
-                      print(f"Updated ARM64: size={arm64_size}, 
-sha256={remote_arm64_hash}")
+                      print(f"Updated ARM64: size={arm64_size}, sha256={remote_arm64_hash}")
                   
                   # Write updated manifest
                   with open('com.icons8.Lunacy.yml', 'w') as f:
-                      yaml.dump(manifest, f, default_flow_style=False, 
-sort_keys=False, indent=2)
+                      yaml.dump(manifest, f, default_flow_style=False, sort_keys=False, indent=2)
                   
-                  print("SUCCESS: Updated manifest with new beta hashes 
-and sizes")
+                  print("SUCCESS: Updated manifest with new beta hashes and sizes")
                   manifest_updated = True
               else:
                   print("No changes detected - files are up to date")
@@ -214,28 +200,23 @@ and sizes")
                       new_release.set('version', version)
                       new_release.set('date', today)
                       
-                      description = ET.SubElement(new_release, 
-'description')
+                      description = ET.SubElement(new_release, 'description')
                       p = ET.SubElement(description, 'p')
-                      p.text = f"Beta release of Lunacy {version} with new 
-features and improvements."
+                      p.text = f"Beta release of Lunacy {version} with new features and improvements."
                       
                       ul = ET.SubElement(description, 'ul')
                       li1 = ET.SubElement(ul, 'li')
-                      li1.text = "Latest beta version with cutting-edge 
-features"
+                      li1.text = "Latest beta version with cutting-edge features"
                       li2 = ET.SubElement(ul, 'li')
                       li2.text = "Performance improvements and bug fixes"
                       li3 = ET.SubElement(ul, 'li')
-                      li3.text = "Available for both x86_64 and aarch64 
-architectures"
+                      li3.text = "Available for both x86_64 and aarch64 architectures"
                       
                       tree.write('com.icons8.Lunacy.metainfo.xml', 
                                encoding='UTF-8', xml_declaration=True)
                       return True
                   else:
-                      print(f"Version {version} already exists in 
-metainfo")
+                      print(f"Version {version} already exists in metainfo")
                       return False
               except Exception as e:
                   print(f"Error updating metainfo: {e}")
@@ -255,8 +236,7 @@ metainfo")
               f.write(f"manifest_updated={manifest_updated}\n")
               f.write(f"metainfo_updated={metainfo_updated}\n")
 
-          print(f"SUCCESS: Beta update completed for version 
-{current_version}")
+          print(f"SUCCESS: Beta update completed for version {current_version}")
           EOF
 
       - name: Commit and push changes
@@ -265,14 +245,11 @@ metainfo")
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add com.icons8.Lunacy.yml com.icons8.Lunacy.metainfo.xml
-          git diff --staged --quiet || git commit -m "Update Lunacy Beta 
-to version ${{ steps.update.outputs.version }}
+          git diff --staged --quiet || git commit -m "Update Lunacy Beta to version ${{ steps.update.outputs.version }}
 
           - Version: ${{ steps.update.outputs.version }}
-          - Manifest: ${{ steps.update.outputs.manifest_updated == 'true' 
-&& 'Updated' || 'No changes' }}
-          - Metainfo: ${{ steps.update.outputs.metainfo_updated == 'true' 
-&& 'Updated' || 'No changes' }}
+          - Manifest: ${{ steps.update.outputs.manifest_updated == 'true' && 'Updated' || 'No changes' }}
+          - Metainfo: ${{ steps.update.outputs.metainfo_updated == 'true' && 'Updated' || 'No changes' }}
 
           Auto-generated by GitHub Actions."
           git push origin beta
