@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.icons8.Lunacy</id>
+  <name>Lunacy</name>
+  <summary>Free graphic design tool for UX/UI</summary>
+  <developer id="icons8.com">
+    <name translatable="no">Icons8</name>
+  </developer>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LicenseRef-proprietary</project_license>
+  <description>
+    <p>
+      Lunacy is the ultimate graphic design editor for UX/UI, and Web. It combines the best features of all the designer apps to help you optimize your workflow and minimize distractions. Take advantage of the built-in graphics library, use powerful AI tools, and collaborate on projects with your team on several platforms simultaneously!
+    </p>
+    <p>Let’s take a look at what’s inside:</p>
+    <ul>
+      <li>Real-time collaboration with comments, stickers, and audio messages</li>
+      <li>1 500 000 icons, photos, and illustrations</li>
+      <li>AI routine killers: BG remover, image upscaler, text and avatar generators</li>
+      <li>Figma &amp; Sketch support</li>
+      <li>Cloud storage</li>
+      <li>Private offline mode</li>
+      <li>Low system requirements</li>
+      <li>26 supported languages</li>
+    </ul>
+    <p>And much more!</p>
+    <p>Don’t forget to join our growing designer community!</p>
+  </description>
+  <url type="homepage">https://icons8.com/lunacy</url>
+  <url type="bugtracker">https://community.icons8.com/c/lunacy/7</url>
+  <url type="contact">https://lunacy.docs.icons8.com/contact/</url>
+  <launchable type="desktop-id">com.icons8.Lunacy.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://cloud.icons8.com/public.php/dav/files/3Ax2zZ5bMbScyZB/Build%20projects%20beyond%20imagination.png</image>
+      <caption>Build Projects Beyond Imagination</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cloud.icons8.com/public.php/dav/files/3Ax2zZ5bMbScyZB/Collaborate%20in%20real-time.png</image>
+      <caption>Collaborate in real-time</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cloud.icons8.com/public.php/dav/files/3Ax2zZ5bMbScyZB/Design%20faster%20with%20auto%20layout.png</image>
+      <caption>Design faster with auto layout</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cloud.icons8.com/public.php/dav/files/3Ax2zZ5bMbScyZB/Generate%20content%20and%20enhance%20images.png</image>
+      <caption>Generate content and enhance images</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cloud.icons8.com/public.php/dav/files/3Ax2zZ5bMbScyZB/Graphic%20design%20reimagined.png</image>
+      <caption>Graphic Design reimagined</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cloud.icons8.com/public.php/dav/files/3Ax2zZ5bMbScyZB/Import%20your%20latest%20designs%20from%20Figma%20and%20work%20in%20other%20formats.png</image>
+      <caption>Import your latest designs from Figma and work in other formats</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cloud.icons8.com/public.php/dav/files/3Ax2zZ5bMbScyZB/No%20need%20to%20stay%20online.png</image>
+      <caption>No need to stay online</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cloud.icons8.com/public.php/dav/files/3Ax2zZ5bMbScyZB/Prototype%20to%20your%20heart%E2%80%99s%20content!.png</image>
+      <caption>Prototype to your heart's content</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cloud.icons8.com/public.php/dav/files/3Ax2zZ5bMbScyZB/Store%20your%20files%20in%20the%20cloud%20and%20access%20them%20anywhere.png</image>
+      <caption>Store your files in the cloud and access them anywhere</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cloud.icons8.com/public.php/dav/files/3Ax2zZ5bMbScyZB/Use%201.5%20million%20icons,%20illustrations,%20and%20photos.png</image>
+      <caption>Use 1.5 million icons, illustrations, and photos</caption>
+    </screenshot>
+  </screenshots>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="12.0.0.18143" date="2025-09-23">
+      <description>
+        <p>Lunacy 12.0 with new features and improvements.</p>
+        <ul>
+          <li>Latest version with cutting-edge features</li>
+          <li>Performance improvements and bug fixes</li>
+          <li>Bundled at build time - no download during installation</li>
+        </ul>
+      </description>
+    </release>
+    <release version="12.0.0.18138" date="2025-09-23">
+      <description>
+        <p>Beta release of Lunacy 12.0 with new features and improvements.</p>
+        <ul>
+          <li>Latest beta version with cutting-edge features</li>
+          <li>Performance improvements and bug fixes</li>
+          <li>Available for both x86_64 and aarch64 architectures</li>
+        </ul>
+      </description>
+    </release>
+    <release version="12.0.0.18129" date="2025-09-22">
+      <description>
+        <p>Beta release of Lunacy 12.0 with new features and improvements.</p>
+        <ul>
+          <li>Latest beta version with cutting-edge features</li>
+          <li>Performance improvements and bug fixes</li>
+          <li>Available for both x86_64 and aarch64 architectures</li>
+        </ul>
+      </description>
+    </release>
+    <release version="11.6" date="2025-07-02">
+      <description></description>
+    </release>
+    <release version="11.5" date="2025-06-26">
+      <description/>
+    </release>
+    <release version="11.4" date="2025-04-21">
+      <description/>
+    </release>
+    <release version="11.3" date="2025-04-18">
+      <description/>
+    </release>
+    <release version="11.2.1" date="2025-03-27">
+      <description/>
+    </release>
+    <release version="11.2" date="2025-03-26">
+      <description/>
+    </release>
+    <release version="11.1" date="2025-03-25">
+      <description/>
+    </release>
+    <release version="11.0" date="2025-03-03">
+      <description/>
+    </release>
+    <release version="10.11" date="2025-01-15">
+      <description/>
+    </release>
+    <release version="10.10" date="2024-12-13">
+      <description/>
+    </release>
+    <release version="10.9.0" date="2024-12-03">
+      <description/>
+    </release>
+    <release version="10.8.0" date="2024-11-29">
+      <description/>
+    </release>
+    <release version="10.7.0.1613" date="2024-11-26">
+      <description/>
+    </release>
+    <release version="10.6" date="2024-11-18">
+      <description/>
+    </release>
+    <release version="10.5" date="2024-10-23">
+      <description/>
+    </release>
+    <release version="10.4" date="2024-10-15">
+      <description/>
+    </release>
+    <release version="10.3" date="2024-10-03">
+      <description/>
+    </release>
+    <release version="10.2" date="2024-09-24">
+      <description/>
+    </release>
+    <release version="10.1" date="2024-09-13">
+      <description/>
+    </release>
+    <release version="10.0.1" date="2024-08-27">
+      <description/>
+    </release>
+    <release version="9.6.1" date="2024-05-27">
+      <description/>
+    </release>
+    <release version="9.6.1" date="2024-05-27">
+      <description/>
+    </release>
+    <release version="9.6.0" date="2024-04-26"/>
+    <release version="9.5.0" date="2024-03-19">
+      <description>
+        <p>FREE format</p>
+        <p>The default file format in Lunacy is now <code>.free</code>, which is almost fully compatible with the features from the Figma and Sketch formats. We designed <code>.free</code> to address the issues available in <code>.sketch</code> when it comes to very large design files.</p>
+        <p>Lunacy still supports <code>.sketch</code> like no other app, except Sketch itself. But for better experience with Lunacy, we recommend using <code>.free</code>.</p>
+        <p>You can easily convert between the formats using the "Save as" option.</p>
+      </description>
+    </release>
+    <release version="9.4.2.5022" date="2024-02-08"/>
+    <release version="9.4.1" date="2024-02-03"/>
+    <release version="9.3.3" date="2023-12-28"/>
+    <release version="9.2.1" date="2023-08-17"/>
+    <release version="9.2.0" date="2023-08-08"/>
+    <release version="9.1.1" date="2023-06-08"/>
+    <release version="9.1.0" date="2023-05-31"/>
+    <release version="9.0.9" date="2023-04-06"/>
+    <release version="9.0.8" date="2023-03-17"/>
+    <release version="9.0.0" date="2023-02-28"/>
+    <release version="8.7.2" date="2022-10-03"/>
+    <release version="8.6.2" date="2022-07-21"/>
+    <release version="8.5.2" date="2022-06-08"/>
+    <release version="8.4.1" date="2022-03-28"/>
+    <release version="8.3.0" date="2022-03-02"/>
+  </releases>
+</component>
