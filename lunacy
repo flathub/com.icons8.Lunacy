@@ -1,3 +1,10 @@
 #!/bin/sh
 export XDG_DATA_DIRS=/app/share:/usr/share:/usr/share/runtime/share:/run/host/share
+
+# Ensure settings directory exists for Lunacy
+SETTINGS_DIR="$HOME/.local/share/Icons8/Lunacy"
+if [ ! -d "$SETTINGS_DIR" ]; then
+    mkdir -p "$SETTINGS_DIR"
+fi
+
 exec /app/Lunacy "$@"

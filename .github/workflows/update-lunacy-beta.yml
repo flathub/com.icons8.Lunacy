@@ -173,7 +173,7 @@ jobs:
               try:
                   import xml.etree.ElementTree as ET
                   
-                  tree = ET.parse('com.icons8.Lunacy.metainfo.xml')
+                   tree = ET.parse('com.icons8.Lunacy.metainfo.xml')
                   root = tree.getroot()
                   
                   releases = root.find('releases')
@@ -206,8 +206,7 @@ jobs:
                       li3 = ET.SubElement(ul, 'li')
                       li3.text = "Bundled at build time - no download during installation"
                       
-                      tree.write('com.icons8.Lunacy.metainfo.xml', 
-                               encoding='UTF-8', xml_declaration=True)
+                      tree.write('com.icons8.Lunacy.metainfo.xml', encoding='UTF-8', xml_declaration=True)
                       return True
                   else:
                       print(f"Version {version} already exists in metainfo")
