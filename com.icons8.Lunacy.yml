@@ -34,48 +34,32 @@ modules:
       - mkdir -p ${FLATPAK_DEST}/lib
       - ARCH_TRIPLE=$(gcc --print-multiarch) && cp /usr/lib/${ARCH_TRIPLE}/libbfd-*.so
         ${FLATPAK_DEST}/lib
-      - install -D apply_extra ${FLATPAK_DEST}/bin/apply_extra
+      # Extract Lunacy from .deb file
+      - bsdtar xf Lunacy.deb
+      - tar xf data.tar.xz --no-same-owner
+      - cp -r opt/icons8/lunacy/* ${FLATPAK_DEST}/
+      - rm -rf control.tar.xz data.tar.xz debian-binary Lunacy.deb opt
       - install -D -t ${FLATPAK_DEST}/share/applications com.icons8.Lunacy.desktop
       - install -D -t ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps com.icons8.Lunacy.svg
       - install -D -t ${FLATPAK_DEST}/share/icons/hicolor/128x128/apps com.icons8.Lunacy.png
       - install -Dm644 -t ${FLATPAK_DEST}/share/metainfo com.icons8.Lunacy.metainfo.xml
 
     sources:
-      # Source for x86_64 architecture (BETA)
-      - type: extra-data
-        filename: Lunacy.deb
+      # Source for x86_64 architecture (BETA) - downloaded at build time
+      - type: file
         url: https://lcdn.icons8.com/setup/beta/Lunacy.deb
-        sha256: da4ed5cfef8c67d027e950188f98fb491fd4440fa5d760580751d88bc32533c6
-        size: 63209184
+        sha256: cc05f9a3ef91846394e40fd24abac63dca463e56db5d34d1cba44e7ac69f617c
+        dest-filename: Lunacy.deb
         only-arches:
           - x86_64
-        x-checker-data:
-          type: html
-          url: https://docs.icons8.com/release-notes
-          pattern: (https://\S+/setup/Lunacy_([0-9.]+)\.deb)
-          is-main-source: true
 
-      # Source for aarch64 architecture (BETA)
-      - type: extra-data
-        filename: Lunacy.deb
+      # Source for aarch64 architecture (BETA) - downloaded at build time  
+      - type: file
         url: https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb
-        sha256: 7b4ac7ef1c5981ea98a97f488ec8bd5db56447aedf77250f38e212c3a7a699e3
-        size: 56155448
+        sha256: 360518cc117929e8556469d0b9749bac08e7eae4c4ebdf5e182b7edea93b65cd
+        dest-filename: Lunacy.deb
         only-arches:
           - aarch64
-        x-checker-data:
-          type: html
-          url: https://docs.icons8.com/release-notes
-          pattern: (https://\S+/setup/beta/Lunacy\.ARM\.deb)
-          is-main-source: false
-
-      - type: script
-        dest-filename: apply_extra
-        commands:
-          - bsdtar xf Lunacy.deb
-          - tar xf data.tar.xz --no-same-owner
-          - mv opt/icons8/lunacy/* .
-          - rm -rf control.tar.xz data.tar.xz debian-binary Lunacy.deb opt
 
       - type: file
         path: lunacy

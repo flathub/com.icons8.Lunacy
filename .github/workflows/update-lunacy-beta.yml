@@ -91,11 +91,11 @@ jobs:
           with open('com.icons8.Lunacy.yml', 'r') as f:
               manifest = yaml.safe_load(f)
 
-          # Find current versions in manifest
+          # Find current versions in manifest  
           x64_source = None
           arm64_source = None
           for source in manifest['modules'][0]['sources']:
-              if source.get('type') == 'extra-data':
+              if source.get('type') == 'file' and 'setup/beta/Lunacy' in source.get('url', ''):
                   if source.get('only-arches') == ['x86_64']:
                       x64_source = source
                   elif source.get('only-arches') == ['aarch64']:
@@ -143,28 +143,20 @@ jobs:
                   print("Files have changed, updating manifest...")
                   
                   if x64_needs_update:
-                      # Get file size for x64
-                      response = requests.head(BETA_X64_URL)
-                      x64_size = int(response.headers.get('content-length', 0))
-                      
+                      # Update only hash for file sources (no size needed)
                       x64_source['sha256'] = remote_x64_hash
-                      x64_source['size'] = x64_size
-                      print(f"Updated x64: size={x64_size}, sha256={remote_x64_hash}")
+                      print(f"Updated x64: sha256={remote_x64_hash}")
                   
                   if arm64_needs_update and arm64_source:
-                      # Get file size for ARM64
-                      response = requests.head(BETA_ARM_URL)
-                      arm64_size = int(response.headers.get('content-length', 0))
-                      
+                      # Update only hash for file sources (no size needed)
                       arm64_source['sha256'] = remote_arm64_hash
-                      arm64_source['size'] = arm64_size
-                      print(f"Updated ARM64: size={arm64_size}, sha256={remote_arm64_hash}")
+                      print(f"Updated ARM64: sha256={remote_arm64_hash}")
                   
                   # Write updated manifest
                   with open('com.icons8.Lunacy.yml', 'w') as f:
                       yaml.dump(manifest, f, default_flow_style=False, sort_keys=False, indent=2)
                   
-                  print("SUCCESS: Updated manifest with new beta hashes and sizes")
+                      print("SUCCESS: Updated manifest with new beta hashes")
                   manifest_updated = True
               else:
                   print("No changes detected - files are up to date")
@@ -210,7 +202,7 @@ jobs:
                       li2 = ET.SubElement(ul, 'li')
                       li2.text = "Performance improvements and bug fixes"
                       li3 = ET.SubElement(ul, 'li')
-                      li3.text = "Available for both x86_64 and aarch64 architectures"
+                       li3.text = "Bundled at build time - no download during installation"
                       
                       tree.write('com.icons8.Lunacy.metainfo.xml', 
                                encoding='UTF-8', xml_declaration=True)
