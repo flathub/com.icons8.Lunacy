@@ -68,17 +68,18 @@ jobs:
                   print(f"Error getting version from {deb_url}: {e}")
                   return None
 
-          def get_file_info(url):
-              """Download file and get size and hash"""
-              print(f"Downloading {url}")
+          def get_remote_file_hash(url):
+              """Get SHA256 hash of remote file without downloading fully"""
+              print(f"Checking hash for {url}")
               response = requests.get(url, stream=True)
               if response.status_code != 200:
                   raise Exception(f"Failed to download {url}: {response.status_code}")
               
-              content = response.content
-              size = len(content)
-              sha256 = hashlib.sha256(content).hexdigest()
-              return size, sha256
+              sha256_hash = hashlib.sha256()
+              for chunk in response.iter_content(chunk_size=8192):
+                  sha256_hash.update(chunk)
+              
+              return sha256_hash.hexdigest()
 
           # Get current beta version
           current_version = get_deb_version(BETA_X64_URL)
@@ -114,36 +115,63 @@ jobs:
           print("Checking for updates...")
 
           try:
-              # Get file info for x64 beta
-              x64_size, x64_sha256 = get_file_info(BETA_X64_URL)
-              print(f"x64 beta: size={x64_size}, sha256={x64_sha256}")
-
-              # Update x64 manifest
-              x64_source['url'] = BETA_X64_URL
-              x64_source['sha256'] = x64_sha256
-              x64_source['size'] = x64_size
-
-              # Get file info for ARM beta if available
+              # Check if x64 beta file has changed
+              current_x64_hash = x64_source.get('sha256', '')
+              remote_x64_hash = get_remote_file_hash(BETA_X64_URL)
+              
+              print(f"Current x64 hash in manifest: {current_x64_hash}")
+              print(f"Remote x64 hash: {remote_x64_hash}")
+              
+              x64_needs_update = current_x64_hash != remote_x64_hash
+              arm64_needs_update = False
+              
+              # Check ARM64 beta if available
               if arm64_source:
                   try:
-                      arm64_size, arm64_sha256 = get_file_info(BETA_ARM_URL)
-                      print(f"ARM64 beta: size={arm64_size}, sha256={arm64_sha256}")
+                      current_arm64_hash = arm64_source.get('sha256', '')
+                      remote_arm64_hash = get_remote_file_hash(BETA_ARM_URL)
                       
-                      # Update ARM64 manifest
-                      arm64_source['url'] = BETA_ARM_URL
-                      arm64_source['sha256'] = arm64_sha256
-                      arm64_source['size'] = arm64_size
+                      print(f"Current ARM64 hash in manifest: {current_arm64_hash}")
+                      print(f"Remote ARM64 hash: {remote_arm64_hash}")
+                      
+                      arm64_needs_update = current_arm64_hash != remote_arm64_hash
                   except Exception as e:
-                      print(f"WARNING: Could not update ARM64 beta: {e}")
-
-              # Write updated manifest
-              with open('com.icons8.Lunacy.yml', 'w') as f:
-                  yaml.dump(manifest, f, default_flow_style=False, sort_keys=False, indent=2)
+                      print(f"WARNING: Could not check ARM64 beta: {e}")
               
-              print("SUCCESS: Updated manifest with new beta URLs, hashes and sizes")
+              # Update manifest only if files have changed
+              if x64_needs_update or arm64_needs_update:
+                  print("Files have changed, updating manifest...")
+                  
+                  if x64_needs_update:
+                      # Get file size for x64
+                      response = requests.head(BETA_X64_URL)
+                      x64_size = int(response.headers.get('content-length', 0))
+                      
+                      x64_source['sha256'] = remote_x64_hash
+                      x64_source['size'] = x64_size
+                      print(f"Updated x64: size={x64_size}, sha256={remote_x64_hash}")
+                  
+                  if arm64_needs_update and arm64_source:
+                      # Get file size for ARM64
+                      response = requests.head(BETA_ARM_URL)
+                      arm64_size = int(response.headers.get('content-length', 0))
+                      
+                      arm64_source['sha256'] = remote_arm64_hash
+                      arm64_source['size'] = arm64_size
+                      print(f"Updated ARM64: size={arm64_size}, sha256={remote_arm64_hash}")
+                  
+                  # Write updated manifest
+                  with open('com.icons8.Lunacy.yml', 'w') as f:
+                      yaml.dump(manifest, f, default_flow_style=False, sort_keys=False, indent=2)
+                  
+                  print("SUCCESS: Updated manifest with new beta hashes and sizes")
+                  manifest_updated = True
+              else:
+                  print("No changes detected - files are up to date")
+                  manifest_updated = False
 
           except Exception as e:
-              print(f"CRITICAL ERROR: Failed to update manifest: {e}")
+              print(f"CRITICAL ERROR: Failed to check beta files: {e}")
               exit(1)
 
           # Update metainfo.xml with beta version
@@ -201,9 +229,11 @@ jobs:
               print("INFO: Metainfo already up to date")
 
           # Set output for next step
+          files_updated = manifest_updated or metainfo_updated
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-              f.write(f"updated=true\n")
+              f.write(f"updated={files_updated}\n")
               f.write(f"version={current_version}\n")
+              f.write(f"manifest_updated={manifest_updated}\n")
               f.write(f"metainfo_updated={metainfo_updated}\n")
 
           print(f"SUCCESS: Beta update completed for version {current_version}")
@@ -217,8 +247,8 @@ jobs:
           git add com.icons8.Lunacy.yml com.icons8.Lunacy.metainfo.xml
           git diff --staged --quiet || git commit -m "Update Lunacy Beta to version ${{ steps.update.outputs.version }}
 
-          - Updated beta URLs and checksums
           - Version: ${{ steps.update.outputs.version }}
+          - Manifest: ${{ steps.update.outputs.manifest_updated == 'true' && 'Updated' || 'No changes' }}
           - Metainfo: ${{ steps.update.outputs.metainfo_updated == 'true' && 'Updated' || 'No changes' }}
 
           Auto-generated by GitHub Actions."
