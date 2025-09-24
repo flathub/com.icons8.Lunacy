@@ -2,8 +2,8 @@ name: Update Lunacy Beta
 
 on:
   schedule:
-    # Run daily at 10:00 UTC
-    - cron: '20 11 * * *'
+    # Run daily 12:15 UTC
+    - cron: '15 12 * * *'
   workflow_dispatch:
 
 jobs:
@@ -25,235 +25,218 @@ jobs:
 
       - name: Install dependencies
         run: |
-           pip install requests ruamel.yaml lxml
+          pip install requests
 
       - name: Check for beta updates and update manifest
         id: update
         run: |
-           import requests
-           import re
-           from ruamel.yaml import YAML
-           import hashlib
-           import os
-           from datetime import datetime
-           from lxml import etree as ET
-           
-           # Beta URLs
-           BETA_X64_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.deb"
-           BETA_ARM_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb"
-           
-           def get_deb_version(deb_url):
-               """Download deb file and extract version using dpkg-deb"""
-               try:
-                   print(f"Downloading {deb_url} to check version...")
-                   response = requests.get(deb_url, stream=True)
-                   if response.status_code != 200:
-                       print(f"Failed to download {deb_url}: {response.status_code}")
-                       return None
-                   
-                   # Save to temporary file
-                   with open('/tmp/beta_lunacy.deb', 'wb') as f:
-                       f.write(response.content)
-                   
-                   # Get version using dpkg-deb
-                   import subprocess
-                   result = subprocess.run(['dpkg-deb', '-f', '/tmp/beta_lunacy.deb', 'Version'], 
-                                         capture_output=True, text=True)
-                   if result.returncode == 0:
-                       version = result.stdout.strip()
-                       print(f"Found version: {version}")
-                       return version
-                   else:
-                       print(f"Failed to get version: {result.stderr}")
-                       return None
-               except Exception as e:
-                   print(f"Error getting version from {deb_url}: {e}")
-                   return None
-           
-           def get_remote_file_hash(url):
-               """Get SHA256 hash of remote file without downloading fully"""
-               print(f"Checking hash for {url}")
-               response = requests.get(url, stream=True)
-               if response.status_code != 200:
-                   raise Exception(f"Failed to download {url}: {response.status_code}")
-               
-               sha256_hash = hashlib.sha256()
-               for chunk in response.iter_content(chunk_size=8192):
-                   sha256_hash.update(chunk)
-               
-               return sha256_hash.hexdigest()
-           
-           # Get current beta version
-           current_version = get_deb_version(BETA_X64_URL)
-           if not current_version:
-               print("Could not get current beta version")
-               exit(1)
-           
-           print(f"Current beta version: {current_version}")
-           
-           # Load current manifest
-           manifest_updated = False
-           try:
-               yaml = YAML()
-               with open('com.icons8.Lunacy.yml', 'r') as f:
-                   manifest = yaml.load(f)
-               
-               # Find the sources in the last module
-               modules = manifest.get('modules', [])
-               if not modules:
-                   print("ERROR: No modules found in manifest")
-                   exit(1)
-               
-               last_module = modules[-1]
-               sources = last_module.get('sources', [])
-               
-               # Find file sources (should be x64 and potentially arm64)
-               file_sources = [s for s in sources if s.get('type') == 'file' and 'url' in s]
-               
-               if len(file_sources) == 0:
-                   print("ERROR: No file sources found in manifest")
-                   exit(1)
-               
-               print(f"Found {len(file_sources)} file source(s)")
-               
-               # Identify x64 and arm64 sources
-               x64_source = None
-               arm64_source = None
-               
-               for source in file_sources:
-                   url = source.get('url', '')
-                   if 'ARM' in url.upper():
-                       arm64_source = source
-                   elif 'LUNACY.DEB' in url.upper():
-                       x64_source = source
-               
-               if not x64_source:
-                   print("ERROR: No x64 source found")
-                   exit(1)
-               
-               print(f"Found x64 source: {x64_source.get('url', 'no-url')}")
-               if arm64_source:
-                   print(f"Found ARM64 source: {arm64_source.get('url', 'no-url')}")
-               
-               # Check if files need updating
-               x64_needs_update = False
-               arm64_needs_update = False
-               
-               try:
-                   current_x64_hash = x64_source.get('sha256', '')
-                   remote_x64_hash = get_remote_file_hash(BETA_X64_URL)
-                   
-                   print(f"Current x64 hash in manifest: {current_x64_hash}")
-                   print(f"Remote x64 hash: {remote_x64_hash}")
-                   
-                   x64_needs_update = current_x64_hash != remote_x64_hash
-               except Exception as e:
-                   print(f"ERROR: Could not check x64 beta: {e}")
-                   exit(1)
-               
-               if arm64_source:
-                   try:
-                       current_arm64_hash = arm64_source.get('sha256', '')
-                       remote_arm64_hash = get_remote_file_hash(BETA_ARM_URL)
-                       
-                       print(f"Current ARM64 hash in manifest: {current_arm64_hash}")
-                       print(f"Remote ARM64 hash: {remote_arm64_hash}")
-                       
-                       arm64_needs_update = current_arm64_hash != remote_arm64_hash
-                   except Exception as e:
-                       print(f"WARNING: Could not check ARM64 beta: {e}")
-               
-               # Update manifest only if files have changed
-               if x64_needs_update or arm64_needs_update:
-                   print("Files have changed, updating manifest...")
-                   
-                   if x64_needs_update:
-                       x64_source['sha256'] = remote_x64_hash
-                       print(f"Updated x64: sha256={remote_x64_hash}")
-                   
-                   if arm64_needs_update and arm64_source:
-                       arm64_source['sha256'] = remote_arm64_hash
-                       print(f"Updated ARM64: sha256={remote_arm64_hash}")
-                   
-                   # Write updated manifest
-                   with open('com.icons8.Lunacy.yml', 'w') as f:
-                       yaml.dump(manifest, f)
-                   
-                   print("SUCCESS: Updated manifest with new beta hashes")
-                   manifest_updated = True
-               else:
-                   print("No changes detected - files are up to date")
-           
-           except Exception as e:
-               print(f"CRITICAL ERROR: Failed to check beta files: {e}")
-               exit(1)
-           
-           # Update metainfo.xml with beta version
-           def update_metainfo_beta(version):
-               try:
-                   parser = ET.XMLParser(remove_blank_text=True)
-                   tree = ET.parse('com.icons8.Lunacy.metainfo.xml', parser)
-                   root = tree.getroot()
-                   
-                   releases = root.find('releases')
-                   if releases is None:
-                       return False
-                   
-                   # Check if this version already exists
-                   version_exists = any(release.get('version') == version for release in releases.findall('release'))
-                   
-                   if not version_exists:
-                       # Add new beta release at the top
-                       today = datetime.now().strftime('%Y-%m-%d')
-                       new_release = ET.Element('release')
-                       new_release.set('version', version)
-                       new_release.set('date', today)
-                       
-                       description = ET.SubElement(new_release, 'description')
-                       p = ET.SubElement(description, 'p')
-                       p.text = f"Beta release of Lunacy {version} with new features and improvements."
-                       
-                       ul = ET.SubElement(description, 'ul')
-                       li1 = ET.SubElement(ul, 'li')
-                       li1.text = "Latest beta version with cutting-edge features"
-                       li2 = ET.SubElement(ul, 'li')
-                       li2.text = "Performance improvements and bug fixes"
-                       li3 = ET.SubElement(ul, 'li')
-                       li3.text = "Bundled at build time - no download during installation"
-                       
-                       releases.insert(0, new_release)
-                       
-                       tree.write('com.icons8.Lunacy.metainfo.xml', pretty_print=True, encoding='UTF-8', xml_declaration=True)
-                       return True
-                   else:
-                       print(f"Version {version} already exists in metainfo")
-                       return False
-               except Exception as e:
-                   print(f"Error updating metainfo: {e}")
-                   return False0
-           
-           metainfo_updated = update_metainfo_beta(current_version)
-           if metainfo_updated:
-               print("SUCCESS: Updated metainfo.xml with new beta release")
-           else:
-               print("INFO: Metainfo already up to date")
-           
-           # Set output for next step
-           files_updated = manifest_updated or metainfo_updated
-           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-               f.write(f"updated={str(files_updated).lower()}\n")
-               f.write(f"version={current_version}\n")
-               f.write(f"manifest_updated={str(manifest_updated).lower()}\n")
-               f.write(f"metainfo_updated={str(metainfo_updated).lower()}\n")
-           
-           print(f"SUCCESS: Beta update completed for version {current_version}")
+          python3 << 'EOF'
+          import requests
+          import re
+          import hashlib
+          import os
+          import subprocess
+          from datetime import datetime
+          
+          # Beta URLs
+          BETA_X64_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.deb"
+          BETA_ARM_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb"
+          
+          def get_deb_version(deb_url):
+              """Download deb file and extract version using dpkg-deb"""
+              try:
+                  print(f"Downloading {deb_url} to check version...")
+                  response = requests.get(deb_url, stream=True)
+                  if response.status_code != 200:
+                      print(f"Failed to download {deb_url}: {response.status_code}")
+                      return None
+                  
+                  # Save to temporary file
+                  with open('/tmp/beta_lunacy.deb', 'wb') as f:
+                      f.write(response.content)
+                  
+                  # Get version using dpkg-deb
+                  result = subprocess.run(['dpkg-deb', '-f', '/tmp/beta_lunacy.deb', 'Version'], 
+                                          capture_output=True, text=True)
+                  if result.returncode == 0:
+                      version = result.stdout.strip()
+                      print(f"Found version: {version}")
+                      return version
+                  else:
+                      print(f"Failed to get version: {result.stderr}")
+                      return None
+              except Exception as e:
+                  print(f"Error getting version from {deb_url}: {e}")
+                  return None
+          
+          def get_remote_file_hash(url):
+              """Get SHA256 hash of remote file"""
+              print(f"Checking hash for {url}")
+              response = requests.get(url, stream=True)
+              if response.status_code != 200:
+                  raise Exception(f"Failed to download {url}: {response.status_code}")
+              
+              sha256_hash = hashlib.sha256()
+              for chunk in response.iter_content(chunk_size=8192):
+                  sha256_hash.update(chunk)
+              
+              return sha256_hash.hexdigest()
+          
+          def update_yaml_hashes(yaml_file, x64_hash, arm64_hash=None):
+              """Update only SHA256 hashes in YAML file preserving formatting"""
+              with open(yaml_file, 'r') as f:
+                  content = f.read()
+              
+              # Pattern to find x64 source block
+              x64_pattern = r'(- type: file\s+url: https://lcdn\.icons8\.com/setup/beta/Lunacy\.deb\s+sha256: )([a-f0-9]{64})'
+              
+              # Update x64 hash
+              if re.search(x64_pattern, content, re.MULTILINE):
+                  content = re.sub(x64_pattern, r'\g<1>' + x64_hash, content, flags=re.MULTILINE)
+                  print(f"Updated x64 hash: {x64_hash}")
+              else:
+                  print("ERROR: Could not find x64 source pattern")
+                  return False
+              
+              # Pattern to find ARM64 source block
+              if arm64_hash:
+                  arm64_pattern = r'(- type: file\s+url: https://lcdn\.icons8\.com/setup/beta/Lunacy\.ARM\.deb\s+sha256: )([a-f0-9]{64})'
+                  
+                  if re.search(arm64_pattern, content, re.MULTILINE):
+                      content = re.sub(arm64_pattern, r'\g<1>' + arm64_hash, content, flags=re.MULTILINE)
+                      print(f"Updated ARM64 hash: {arm64_hash}")
+                  else:
+                      print("WARNING: Could not find ARM64 source pattern")
+              
+              # Write back to file
+              with open(yaml_file, 'w') as f:
+                  f.write(content)
+              
+              return True
+          
+          def update_metainfo_xml(xml_file, version):
+              """Add new version to beginning of releases in XML file preserving formatting"""
+              with open(xml_file, 'r') as f:
+                  content = f.read()
+              
+              # Check if version already exists
+              if f'version="{version}"' in content:
+                  print(f"Version {version} already exists in metainfo")
+                  return False
+              
+              # Find the releases opening tag and the first release
+              releases_match = re.search(r'(\s*)(<releases>)\s*\n(\s*)(<release)', content)
+              
+              if not releases_match:
+                  print("ERROR: Could not find <releases> tag with existing releases")
+                  return False
+              
+              base_indent = releases_match.group(1)  # indent before <releases>
+              release_indent = releases_match.group(3)  # indent before first <release>
+              today = datetime.now().strftime('%Y-%m-%d')
+              
+              # Create new release entry with proper indentation matching existing releases
+              new_release = f'''{base_indent}<releases>
+          {release_indent}<release version="{version}" date="{today}">
+          {release_indent}  <description>
+          {release_indent}    <p>Beta release of Lunacy {version} with new features and improvements.</p>
+          {release_indent}    <ul>
+          {release_indent}      <li>Latest beta version with cutting-edge features</li>
+          {release_indent}      <li>Performance improvements and bug fixes</li>
+          {release_indent}      <li>Bundled at build time - no download during installation</li>
+          {release_indent}    </ul>
+          {release_indent}  </description>
+          {release_indent}</release>
+          {release_indent}<release'''
+              
+              # Replace <releases> with new release at the top
+              content = re.sub(r'(\s*)(<releases>)\s*\n(\s*)(<release)', new_release, content)
+              
+              # Write back to file
+              with open(xml_file, 'w') as f:
+                  f.write(content)
+              
+              print(f"Added version {version} to metainfo.xml")
+              return True
+          
+          # Get current beta version
+          current_version = get_deb_version(BETA_X64_URL)
+          if not current_version:
+              print("Could not get current beta version")
+              exit(1)
+          
+          print(f"Current beta version: {current_version}")
+          
+          # Load current manifest and extract hashes
+          with open('com.icons8.Lunacy.yml', 'r') as f:
+              yaml_content = f.read()
+          
+          # Extract current hashes
+          x64_match = re.search(r'url: https://lcdn\.icons8\.com/setup/beta/Lunacy\.deb\s+sha256: ([a-f0-9]{64})', yaml_content, re.MULTILINE)
+          arm64_match = re.search(r'url: https://lcdn\.icons8\.com/setup/beta/Lunacy\.ARM\.deb\s+sha256: ([a-f0-9]{64})', yaml_content, re.MULTILINE)
+          
+          current_x64_hash = x64_match.group(1) if x64_match else ''
+          current_arm64_hash = arm64_match.group(1) if arm64_match else ''
+          
+          print(f"Current x64 hash: {current_x64_hash}")
+          print(f"Current ARM64 hash: {current_arm64_hash}")
+          
+          # Get remote hashes
+          try:
+              remote_x64_hash = get_remote_file_hash(BETA_X64_URL)
+              print(f"Remote x64 hash: {remote_x64_hash}")
+              
+              remote_arm64_hash = get_remote_file_hash(BETA_ARM_URL)  
+              print(f"Remote ARM64 hash: {remote_arm64_hash}")
+              
+          except Exception as e:
+              print(f"Error getting remote hashes: {e}")
+              exit(1)
+          
+          # Check if updates needed
+          x64_needs_update = current_x64_hash != remote_x64_hash
+          arm64_needs_update = current_arm64_hash != remote_arm64_hash
+          
+          print(f"x64 needs update: {x64_needs_update}")
+          print(f"ARM64 needs update: {arm64_needs_update}")
+          
+          files_updated = False
+          manifest_updated = False
+          
+          # Update YAML if needed
+          if x64_needs_update or arm64_needs_update:
+              print("Updating YAML manifest...")
+              if update_yaml_hashes('com.icons8.Lunacy.yml', remote_x64_hash, remote_arm64_hash):
+                  print("Successfully updated YAML")
+                  files_updated = True
+                  manifest_updated = True
+              else:
+                  print("Failed to update YAML")
+                  exit(1)
+          
+          # Update metainfo
+          print("Updating metainfo.xml...")
+          metainfo_updated = update_metainfo_xml('com.icons8.Lunacy.metainfo.xml', current_version)
+          
+          if metainfo_updated:
+              files_updated = True
+          
+          # Set output for next step
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"updated={files_updated}\n")
+              f.write(f"version={current_version}\n")
+              f.write(f"manifest_updated={manifest_updated}\n")
+              f.write(f"metainfo_updated={metainfo_updated}\n")
+          
+          print(f"=== Update completed. Files updated: {files_updated} ===")
+          EOF
 
       - name: Create Pull Request
         if: steps.update.outputs.updated == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-           branch: beta-update-${{ github.run_id }}
+          branch: beta-update-${{ github.run_number }}
           base: beta
           commit-message: |
             Update Lunacy Beta to version ${{ steps.update.outputs.version }}
