@@ -172,8 +172,8 @@ jobs:
           def update_metainfo_beta(version):
               try:
                   import xml.etree.ElementTree as ET
-                  
-                   tree = ET.parse('com.icons8.Lunacy.metainfo.xml')
+                   
+                  tree = ET.parse('com.icons8.Lunacy.metainfo.xml')
                   root = tree.getroot()
                   
                   releases = root.find('releases')
