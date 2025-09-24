@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests beautifulsoup4 pyyaml
+          pip install requests beautifulsoup4
 
       - name: Check for updates and update manifest
         id: update
@@ -32,7 +32,6 @@ jobs:
           python3 << 'EOF'
           import requests
           import re
-          import yaml
           import hashlib
           import os
           from bs4 import BeautifulSoup
@@ -87,27 +86,12 @@ jobs:
           else:
               print(f"No release notes found for {latest_version} (will proceed with update anyway)")
 
-          # Load current manifest
+          # Load current manifest and extract current version
           with open('com.icons8.Lunacy.yml', 'r') as f:
-              manifest = yaml.safe_load(f)
+              yaml_content = f.read()
 
-          # Find current version
-          x64_source = None
-          arm64_source = None
-          
-          for source in manifest['modules'][0]['sources']:
-              if source.get('type') == 'extra-data':
-                  if source.get('only-arches') == ['x86_64']:
-                      x64_source = source
-                  elif source.get('only-arches') == ['aarch64']:
-                      arm64_source = source
-
-          if not x64_source or not arm64_source:
-              print("Could not find sources")
-              exit(1)
-
-          # Extract current version from x64 URL
-          current_match = re.search(r'Lunacy_([0-9.]+)\.deb', x64_source['url'])
+          # Extract current version from x64 URL in YAML content
+          current_match = re.search(r'url: https://lcdn\.icons8\.com/setup/Lunacy_([0-9.]+)\.deb', yaml_content)
           if not current_match:
               print("Could not extract current version")
               exit(1)
@@ -135,6 +119,33 @@ jobs:
               sha256 = hashlib.sha256(content).hexdigest()
               return size, sha256
 
+          def update_yaml_extra_data(yaml_content, x64_url, x64_size, x64_sha256, arm64_url, arm64_size, arm64_sha256):
+              """Update URLs, sizes and hashes for extra-data sources preserving formatting"""
+              
+              # Update x64 source (first extra-data block)
+              x64_pattern = r'(- type: extra-data\s+filename: Lunacy\.deb\s+url: )https://lcdn\.icons8\.com/setup/Lunacy_[0-9.]+\.deb(\s+sha256: )[a-f0-9]{64}(\s+size: )\d+'
+              x64_replacement = rf'\g<1>{x64_url}\g<2>{x64_sha256}\g<3>{x64_size}'
+              
+              if re.search(x64_pattern, yaml_content, re.MULTILINE):
+                  yaml_content = re.sub(x64_pattern, x64_replacement, yaml_content, flags=re.MULTILINE)
+                  print(f"Updated x64: url={x64_url}, sha256={x64_sha256}, size={x64_size}")
+              else:
+                  print("ERROR: Could not find x64 extra-data pattern")
+                  return None
+              
+              # Update ARM64 source (second extra-data block)
+              arm64_pattern = r'(- type: extra-data\s+filename: Lunacy\.deb\s+url: )https://lcdn\.icons8\.com/setup/lunacy_[0-9.]+_arm64\.deb(\s+sha256: )[a-f0-9]{64}(\s+size: )\d+'
+              arm64_replacement = rf'\g<1>{arm64_url}\g<2>{arm64_sha256}\g<3>{arm64_size}'
+              
+              if re.search(arm64_pattern, yaml_content, re.MULTILINE):
+                  yaml_content = re.sub(arm64_pattern, arm64_replacement, yaml_content, flags=re.MULTILINE)
+                  print(f"Updated ARM64: url={arm64_url}, sha256={arm64_sha256}, size={arm64_size}")
+              else:
+                  print("ERROR: Could not find ARM64 extra-data pattern")
+                  return None
+              
+              return yaml_content
+
           # CRITICAL: Get file info for both architectures - this must work
           try:
               x64_size, x64_sha256 = get_file_info(x64_url)
@@ -148,19 +159,17 @@ jobs:
               print(f"CRITICAL ERROR: Failed to download/verify files: {e}")
               exit(1)
 
-          # CRITICAL: Update manifest - this must work
+          # CRITICAL: Update manifest preserving formatting - this must work
           try:
-              x64_source['url'] = x64_url
-              x64_source['sha256'] = x64_sha256
-              x64_source['size'] = x64_size
-
-              arm64_source['url'] = arm64_url
-              arm64_source['sha256'] = arm64_sha256
-              arm64_source['size'] = arm64_size
+              updated_yaml = update_yaml_extra_data(yaml_content, x64_url, x64_size, x64_sha256, arm64_url, arm64_size, arm64_sha256)
+              
+              if updated_yaml is None:
+                  print("CRITICAL ERROR: Failed to update YAML content")
+                  exit(1)
 
               # Write updated manifest
               with open('com.icons8.Lunacy.yml', 'w') as f:
-                  yaml.dump(manifest, f, default_flow_style=False, sort_keys=False, indent=2)
+                  f.write(updated_yaml)
               
               print("SUCCESS: Updated manifest with new URLs, hashes and sizes")
 
@@ -170,36 +179,39 @@ jobs:
 
           # OPTIONAL: Update metainfo.xml with release notes - can fail without breaking update
           def update_metainfo(version, changes):
-              """Update metainfo.xml with new release information - fail silently if it doesn't work"""
+              """Update metainfo.xml preserving formatting - fail silently if it doesn't work"""
               try:
-                  import xml.etree.ElementTree as ET
+                  with open('com.icons8.Lunacy.metainfo.xml', 'r') as f:
+                      xml_content = f.read()
                   
-                  tree = ET.parse('com.icons8.Lunacy.metainfo.xml')
-                  root = tree.getroot()
+                  # Check if version already exists
+                  if f'version="{version}"' in xml_content:
+                      # Find this version's release block and update its description
+                      version_pattern = rf'(<release version="{re.escape(version)}"[^>]*>)(.*?)(</release>)'
+                      
+                      def create_description(changes):
+                          if changes:
+                              change_items = '\\n          '.join([f'<li>{change}</li>' for change in changes])
+                              return (
+                                  '\\n        <description>\\n'
+                                  '          <ul>\\n'
+                                  f'            {change_items}\\n'
+                                  '          </ul>\\n'
+                                  '        </description>'
+                              )
+                          else:
+                              return '\\n        <description>Update with bug fixes and improvements.</description>'
+                      
+                      new_description = create_description(changes)
+                      replacement = rf'\g<1>{new_description}\n    \g<3>'
+                      
+                      if re.search(version_pattern, xml_content, re.DOTALL):
+                          xml_content = re.sub(version_pattern, replacement, xml_content, flags=re.DOTALL)
+                          
+                          with open('com.icons8.Lunacy.metainfo.xml', 'w') as f:
+                              f.write(xml_content)
+                          return True
                   
-                  releases = root.find('releases')
-                  if releases is None:
-                      return False
-                  
-                  for release in releases.findall('release'):
-                      if release.get('version') == version:
-                          description = release.find('description')
-                          if description is not None:
-                              description.clear()
-                              description.text = None
-                              description.tail = None
-                              
-                              if changes:
-                                  ul = ET.SubElement(description, 'ul')
-                                  for change in changes:
-                                      li = ET.SubElement(ul, 'li')
-                                      li.text = change
-                              else:
-                                  description.text = "Update with bug fixes and improvements."
-                              
-                              tree.write('com.icons8.Lunacy.metainfo.xml', 
-                                       encoding='UTF-8', xml_declaration=True)
-                              return True
                   return False
               except Exception:
                   return False
