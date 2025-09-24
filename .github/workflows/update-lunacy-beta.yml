@@ -2,7 +2,7 @@ name: Update Lunacy Beta
 
 on:
   schedule:
-    # Run daily at 15:15 Moscow time (12:15 UTC)
+    # Run daily 12:15 UTC
     - cron: '15 12 * * *'
   workflow_dispatch:
 
