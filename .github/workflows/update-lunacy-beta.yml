@@ -37,11 +37,11 @@ jobs:
           import hashlib
           import os
           from datetime import datetime
-
+          
           # Beta URLs
           BETA_X64_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.deb"
           BETA_ARM_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb"
-
+          
           def get_deb_version(deb_url):
               """Download deb file and extract version using dpkg-deb"""
               try:
@@ -69,7 +69,7 @@ jobs:
               except Exception as e:
                   print(f"Error getting version from {deb_url}: {e}")
                   return None
-
+          
           def get_remote_file_hash(url):
               """Get SHA256 hash of remote file without downloading fully"""
               print(f"Checking hash for {url}")
@@ -82,52 +82,73 @@ jobs:
                   sha256_hash.update(chunk)
               
               return sha256_hash.hexdigest()
-
+          
           # Get current beta version
           current_version = get_deb_version(BETA_X64_URL)
           if not current_version:
               print("Could not get current beta version")
               exit(1)
-
+          
+          print(f"Current beta version: {current_version}")
+          
           # Load current manifest
-          with open('com.icons8.Lunacy.yml', 'r') as f:
-              manifest = yaml.safe_load(f)
-
-          # Find current versions in manifest  
-          x64_source = None
-          arm64_source = None
-          for source in manifest['modules'][0]['sources']:
-              if source.get('type') == 'file' and 'setup/beta/Lunacy' in source.get('url', ''):
-                  if source.get('only-arches') == ['x86_64']:
-                      x64_source = source
-                  elif source.get('only-arches') == ['aarch64']:
-                      arm64_source = source
-
-          if not x64_source:
-              print("Could not find x64 source in manifest")
-              exit(1)
-
-          # Extract version from current URL to compare
-          current_url = x64_source['url']
-          print(f"Current URL in manifest: {current_url}")
-
-          # Check if we need to update (compare versions)
-          # For now, we'll always update to ensure we have the latest beta
-          print(f"Latest beta version: {current_version}")
-          print("Checking for updates...")
-
           try:
-              # Check if x64 beta file has changed
-              current_x64_hash = x64_source.get('sha256', '')
-              remote_x64_hash = get_remote_file_hash(BETA_X64_URL)
+              with open('com.icons8.Lunacy.yml', 'r') as f:
+                  manifest = yaml.safe_load(f)
               
-              print(f"Current x64 hash in manifest: {current_x64_hash}")
-              print(f"Remote x64 hash: {remote_x64_hash}")
+              # Find the sources in the last module
+              modules = manifest.get('modules', [])
+              if not modules:
+                  print("ERROR: No modules found in manifest")
+                  exit(1)
               
-              x64_needs_update = current_x64_hash != remote_x64_hash
+              last_module = modules[-1]
+              sources = last_module.get('sources', [])
+              
+              # Find file sources (should be x64 and potentially arm64)
+              file_sources = [s for s in sources if s.get('type') == 'file']
+              
+              if len(file_sources) == 0:
+                  print("ERROR: No file sources found in manifest")
+                  exit(1)
+              
+              print(f"Found {len(file_sources)} file source(s)")
+              
+              # Identify x64 and arm64 sources
+              x64_source = None
+              arm64_source = None
+              
+              for source in file_sources:
+                  url = source.get('url', '')
+                  if 'ARM' in url.upper():
+                      arm64_source = source
+                  else:
+                      x64_source = source  # Assume non-ARM is x64
+              
+              if not x64_source:
+                  print("ERROR: No x64 source found")
+                  exit(1)
+              
+              print(f"Found x64 source: {x64_source.get('url', 'no-url')}")
+              if arm64_source:
+                  print(f"Found ARM64 source: {arm64_source.get('url', 'no-url')}")
+              
+              # Check if files need updating
+              x64_needs_update = False
               arm64_needs_update = False
               
-              # Check ARM64 beta if available
+              try:
+                  current_x64_hash = x64_source.get('sha256', '')
+                  remote_x64_hash = get_remote_file_hash(BETA_X64_URL)
+                  
+                  print(f"Current x64 hash in manifest: {current_x64_hash}")
+                  print(f"Remote x64 hash: {remote_x64_hash}")
+                  
+                  x64_needs_update = current_x64_hash != remote_x64_hash
+              except Exception as e:
+                  print(f"ERROR: Could not check x64 beta: {e}")
+                  exit(1)
+              
               if arm64_source:
                   try:
                       current_arm64_hash = arm64_source.get('sha256', '')
@@ -163,16 +184,16 @@ jobs:
               else:
                   print("No changes detected - files are up to date")
                   manifest_updated = False
-
+          
           except Exception as e:
               print(f"CRITICAL ERROR: Failed to check beta files: {e}")
               exit(1)
-
+          
           # Update metainfo.xml with beta version
           def update_metainfo_beta(version):
               try:
                   import xml.etree.ElementTree as ET
-                   
+                  
                   tree = ET.parse('com.icons8.Lunacy.metainfo.xml')
                   root = tree.getroot()
                   
@@ -214,13 +235,13 @@ jobs:
               except Exception as e:
                   print(f"Error updating metainfo: {e}")
                   return False
-
+          
           metainfo_updated = update_metainfo_beta(current_version)
           if metainfo_updated:
               print("SUCCESS: Updated metainfo.xml with new beta release")
           else:
               print("INFO: Metainfo already up to date")
-
+          
           # Set output for next step
           files_updated = manifest_updated or metainfo_updated
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
@@ -228,9 +249,8 @@ jobs:
               f.write(f"version={current_version}\n")
               f.write(f"manifest_updated={manifest_updated}\n")
               f.write(f"metainfo_updated={metainfo_updated}\n")
-
+          
           print(f"SUCCESS: Beta update completed for version {current_version}")
-          EOF
 
       - name: Create Pull Request
         if: steps.update.outputs.updated == 'true'
