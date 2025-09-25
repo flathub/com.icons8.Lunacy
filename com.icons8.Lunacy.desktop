@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=Lunacy
-GenericName=Lunacy Graphic Editor
+Name=Lunacy Beta
+GenericName=Lunacy Graphic Editor (Beta)
 Comment=Vector graphics editor
 Exec=lunacy %u
 Icon=com.icons8.Lunacy
