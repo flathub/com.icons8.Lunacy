@@ -74,6 +74,16 @@
   </screenshots>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="12.0.0.18167" date="2025-09-25">
+      <description>
+        <p>Beta release of Lunacy 12.0.0.18167 with new features and improvements.</p>
+        <ul>
+          <li>Latest beta version with cutting-edge features</li>
+          <li>Performance improvements and bug fixes</li>
+          <li>Bundled at build time - no download during installation</li>
+        </ul>
+      </description>
+    </release>
     <release version="12.0.0.18153" date="2025-09-25">
       <description>
         <p>Lunacy Beta 12.0.0.18153 with latest features and improvements.</p>
