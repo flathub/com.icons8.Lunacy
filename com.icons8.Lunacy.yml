@@ -8,7 +8,7 @@ build-options:
 tags:
   - proprietary
 finish-args:
-  - --persist=.local/share/Icons8/Lunacy
+  - --persist=.local/share/Icons8
   - --device=dri
   - --share=ipc
   - --socket=cups
@@ -48,7 +48,7 @@ modules:
       # Source for x86_64 architecture (BETA) - downloaded at build time
       - type: file
         url: https://lcdn.icons8.com/setup/beta/Lunacy.deb
-        sha256: 62817dea291da119fa58ebf58b98a173831f3fad3dd8585f07aa752b4e23d15c
+        sha256: 6731f995c611b4dcf6e9041819ae414db2cf541317e6caf696c7ada4c282fb34
         dest-filename: Lunacy.deb
         only-arches:
           - x86_64
@@ -56,7 +56,7 @@ modules:
       # Source for aarch64 architecture (BETA) - downloaded at build time  
       - type: file
         url: https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb
-        sha256: 61cbd755c47433df183d42c6d5d9483a5b05fbcf24b842b0b0b77b790c54c272
+        sha256: da276e26674413291c0c771ad80fe89d256c25ea3f9a92ceddf32fed5fc357f1
         dest-filename: Lunacy.deb
         only-arches:
           - aarch64
