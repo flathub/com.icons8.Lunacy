@@ -8,7 +8,7 @@ build-options:
 tags:
   - proprietary
 finish-args:
-  - --persist=.local/share/Icons8/Lunacy
+  - --persist=.local/share/Icons8
   - --device=dri
   - --share=ipc
   - --socket=cups
