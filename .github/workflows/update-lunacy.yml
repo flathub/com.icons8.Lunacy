@@ -37,7 +37,7 @@ jobs:
           from bs4 import BeautifulSoup
 
           # Get release notes page
-          response = requests.get('https://docs.icons8.com/release-notes')
+          response = requests.get('https://lunacy.docs.icons8.com/release-notes')
           soup = BeautifulSoup(response.text, 'html.parser')
 
           # Extract latest version using the existing pattern
