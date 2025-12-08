@@ -48,7 +48,7 @@ modules:
       # Source for x86_64 architecture (BETA) - downloaded at build time
       - type: file
         url: https://lcdn.icons8.com/setup/beta/Lunacy.deb
-        sha256: 4d3a6c3a7054b0562a4caa9395b56b1697aa8273a1e80e50498eab152830730d
+        sha256: 8678cc8e8a0be0702de29a866392864c93539127e1e282aec95662bbb6b6ffc8
         dest-filename: Lunacy.deb
         only-arches:
           - x86_64
@@ -56,7 +56,7 @@ modules:
       # Source for aarch64 architecture (BETA) - downloaded at build time  
       - type: file
         url: https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb
-        sha256: edefa3c2e930334bddaa5368e893a43658401c162e4751ae79e9a0bf5d2711f0
+        sha256: 674932a3129d408263ac4467ccbf3a65a39a9fdfa04e4b5de2a27b3d4b25ab6c
         dest-filename: Lunacy.deb
         only-arches:
           - aarch64
