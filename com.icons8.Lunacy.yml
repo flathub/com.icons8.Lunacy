@@ -36,9 +36,9 @@ modules:
         ${FLATPAK_DEST}/lib
       # Extract Lunacy from .deb file
       - bsdtar xf Lunacy.deb
-      - tar xf data.tar.xz --no-same-owner
+      - tar xf data.tar.zst --no-same-owner
       - cp -r opt/icons8/lunacy/* ${FLATPAK_DEST}/
-      - rm -rf control.tar.xz data.tar.xz debian-binary Lunacy.deb opt
+      - rm -rf control.tar.zst data.tar.zst debian-binary Lunacy.deb opt
       - install -D com.icons8.Lunacy.desktop ${FLATPAK_DEST}/share/applications/com.icons8.Lunacy.desktop
       - install -D com.icons8.Lunacy.svg ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/com.icons8.Lunacy.svg
       - install -D com.icons8.Lunacy.png ${FLATPAK_DEST}/share/icons/hicolor/128x128/apps/com.icons8.Lunacy.png
