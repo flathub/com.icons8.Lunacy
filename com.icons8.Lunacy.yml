@@ -73,9 +73,9 @@ modules:
         dest-filename: apply_extra
         commands:
           - bsdtar xf Lunacy.deb
-          - tar xf data.tar.xz --no-same-owner
+          - tar xf data.tar.zst --no-same-owner
           - mv opt/icons8/lunacy/* .
-          - rm -rf control.tar.xz data.tar.xz debian-binary Lunacy.deb opt
+          - rm -rf control.tar.zst data.tar.zst debian-binary Lunacy.deb opt
 
       - type: file
         path: lunacy
