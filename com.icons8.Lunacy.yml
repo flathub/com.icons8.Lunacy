@@ -44,9 +44,9 @@ modules:
       # Source for x86_64 architecture
       - type: extra-data
         filename: Lunacy.deb
-        url: https://lcdn.icons8.com/setup/Lunacy_11.6.deb
-        sha256: 543776a813630b27cecb7bd915a55cdc123cce1426cc4231603370b3b0c86027
-        size: 63084724
+        url: https://lcdn.icons8.com/setup/Lunacy_12.1.deb
+        sha256: 091d8d4a8b59d2726efeb68cd71f53b6c2db044520e02bdc4060c7c8f19b626b
+        size: 59495368
         only-arches:
           - x86_64
         x-checker-data:
@@ -58,9 +58,9 @@ modules:
       # Source for aarch64 architecture
       - type: extra-data
         filename: Lunacy.deb
-        url: https://lcdn.icons8.com/setup/lunacy_11.6_arm64.deb
-        sha256: fb99c38cf55357679af93c38e87b008c87530bbaf708fa4a6b356d98e2287f3d
-        size: 55915304
+        url: https://lcdn.icons8.com/setup/lunacy_12.1_arm64.deb
+        sha256: 8190a28d49fc75d82a8205541ca59171c51e3af281b509bc577c11baad34df6e
+        size: 53805344
         only-arches:
           - aarch64
         x-checker-data:
@@ -73,9 +73,9 @@ modules:
         dest-filename: apply_extra
         commands:
           - bsdtar xf Lunacy.deb
-          - tar xf data.tar.xz --no-same-owner
+          - tar xf data.tar.zst --no-same-owner
           - mv opt/icons8/lunacy/* .
-          - rm -rf control.tar.xz data.tar.xz debian-binary Lunacy.deb opt
+          - rm -rf control.tar.zst data.tar.zst debian-binary Lunacy.deb opt
 
       - type: file
         path: lunacy
