@@ -35,6 +35,7 @@ jobs:
           import hashlib
           import os
           from bs4 import BeautifulSoup
+          from datetime import datetime
 
           # Get release notes page
           response = requests.get('https://lunacy.docs.icons8.com/release-notes')
@@ -183,39 +184,76 @@ jobs:
               try:
                   with open('com.icons8.Lunacy.metainfo.xml', 'r') as f:
                       xml_content = f.read()
-                  
-                  # Check if version already exists
-                  if f'version="{version}"' in xml_content:
-                      # Find this version's release block and update its description
-                      version_pattern = rf'(<release version="{re.escape(version)}"[^>]*>)(.*?)(</release>)'
-                      
-                      def create_description(changes):
-                          if changes:
-                              change_items = '\\n          '.join([f'<li>{change}</li>' for change in changes])
+
+                  releases_match = re.search(r'(^\s*)<releases>(\s*\n)(\s*)<release', xml_content, re.MULTILINE)
+
+                  def build_description(lines, release_indent):
+                      description_indent = release_indent + '    '
+                      if lines:
+                          li_indent = description_indent + '      '
+                          ul_indent = description_indent + '    '
+                          items = []
+                          for item in lines:
+                              if item:
+                                  items.append(f'{li_indent}<li>{item}</li>')
+
+                          if items:
                               return (
-                                  '\\n        <description>\\n'
-                                  '          <ul>\\n'
-                                  f'            {change_items}\\n'
-                                  '          </ul>\\n'
-                                  '        </description>'
+                                  f'\n{description_indent}<description>\n'
+                                  f'{ul_indent}<ul>\n'
+                                  + '\n'.join(items) + '\n'
+                                  f'{ul_indent}</ul>\n'
+                                  f'{description_indent}</description>'
                               )
-                          else:
-                              return '\\n        <description>Update with bug fixes and improvements.</description>'
-                      
-                      new_description = create_description(changes)
-                      replacement = rf'\g<1>{new_description}\n    \g<3>'
-                      
-                      if re.search(version_pattern, xml_content, re.DOTALL):
-                          xml_content = re.sub(version_pattern, replacement, xml_content, flags=re.DOTALL)
-                          
+
+                      return f'\n{description_indent}<description>Update with bug fixes and improvements.</description>'
+
+                  def build_release_block(version, lines, release_indent):
+                      release_date = datetime.utcnow().strftime('%Y-%m-%d')
+                      description = build_description(lines, release_indent)
+                      return (
+                          f'{release_indent}<release version="{version}" date="{release_date}">\n'
+                          f'{description}\n'
+                          f'{release_indent}</release>\n'
+                      )
+
+                  # Update existing version block if present
+                  if f'version="{version}"' in xml_content:
+                      version_pattern = rf'(<release version="{re.escape(version)}"[^>]*>)(.*?)(</release>)'
+
+                      def replace_release_block(match):
+                          header = match.group(1)
+                          release_indent = re.match(r'^(\s*)', header).group(1)
+                          description = build_description(changes, release_indent)
+                          return f'{header}{description}\n{release_indent}</release>'
+
+                      updated_content, count = re.subn(
+                          version_pattern,
+                          replace_release_block,
+                          xml_content,
+                          count=1,
+                          flags=re.DOTALL,
+                      )
+
+                      if count:
                           with open('com.icons8.Lunacy.metainfo.xml', 'w') as f:
-                              f.write(xml_content)
+                              f.write(updated_content)
                           return True
-                  
+
+                  # Add new release block on top if it is missing
+                  if releases_match:
+                      release_indent = releases_match.group(3) if releases_match.group(3) else '    '
+                      new_release = build_release_block(version, changes, release_indent)
+                      insert_at = releases_match.start(3)
+                      xml_content = xml_content[:insert_at] + new_release + xml_content[insert_at:]
+
+                      with open('com.icons8.Lunacy.metainfo.xml', 'w') as f:
+                          f.write(xml_content)
+                      return True
+
                   return False
               except Exception:
                   return False
-          
           metainfo_updated = update_metainfo(latest_version, release_notes)
           if metainfo_updated:
               print("BONUS: Successfully updated metainfo.xml with release notes")

@@ -74,6 +74,21 @@
   </screenshots>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="12.2" date="2026-02-09">
+      <description>
+        <ul>
+          <li>Lunacy online is now available as a full-featured web version at lunacyapp.com.</li>
+          <li>AI Chat now supports multiple providers including Claude, Gemini, OpenAI, and Grok.</li>
+          <li>The MCP server got expanded with additional integration methods.</li>
+          <li>Plugins can now be created in any language through the MCP API.</li>
+          <li>New connectors and sections tools were introduced for diagram-style workflows.</li>
+          <li>New layout and styling features were added, including new styles and improved auto layout.</li>
+          <li>Skew editing, improved prototyping, and color picker upgrades landed in this release.</li>
+          <li>Support for Sketch 2025 format was added, with lower RAM usage and improved rendering.</li>
+          <li>Fixes and improvements include resolved cloud collaboration and instance override issues.</li>
+        </ul>
+      </description>
+    </release>
     <release version="12.0.0.18130" date="2025-09-23">
       <description>
         <p>Rollback to stable 11.6 due to beta release uploaded by mistake</p>
