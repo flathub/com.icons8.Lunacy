@@ -74,19 +74,26 @@
   </screenshots>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="12.3" date="2026-02-09">
+      <description>
+        <p>Lunacy online is available as a full-featured web version, including deployment options for closed environments.</p>
+        <p>AI Chat supports multiple providers including Claude, Gemini, OpenAI, and Grok.</p>
+        <p>The MCP server and plugin ecosystem were expanded with new integration methods.</p>
+        <p>New design capabilities include connectors, sections, improved auto layout, and enhanced prototyping.</p>
+        <p>This release also improves color tools, Sketch 2025 compatibility, rendering performance, and overall stability.</p>
+      </description>
+    </release>
     <release version="12.2" date="2026-02-09">
       <description>
-        <ul>
-          <li>Lunacy online is now available as a full-featured web version at lunacyapp.com.</li>
-          <li>AI Chat now supports multiple providers including Claude, Gemini, OpenAI, and Grok.</li>
-          <li>The MCP server got expanded with additional integration methods.</li>
-          <li>Plugins can now be created in any language through the MCP API.</li>
-          <li>New connectors and sections tools were introduced for diagram-style workflows.</li>
-          <li>New layout and styling features were added, including new styles and improved auto layout.</li>
-          <li>Skew editing, improved prototyping, and color picker upgrades landed in this release.</li>
-          <li>Support for Sketch 2025 format was added, with lower RAM usage and improved rendering.</li>
-          <li>Fixes and improvements include resolved cloud collaboration and instance override issues.</li>
-        </ul>
+        <p>Lunacy online is now available as a full-featured web version at lunacyapp.com.</p>
+        <p>AI Chat now supports multiple providers including Claude, Gemini, OpenAI, and Grok.</p>
+        <p>The MCP server got expanded with additional integration methods.</p>
+        <p>Plugins can now be created in any language through the MCP API.</p>
+        <p>New connectors and sections tools were introduced for diagram-style workflows.</p>
+        <p>New layout and styling features were added, including new styles and improved auto layout.</p>
+        <p>Skew editing, improved prototyping, and color picker upgrades landed in this release.</p>
+        <p>Support for Sketch 2025 format was added, with lower RAM usage and improved rendering.</p>
+        <p>Fixes and improvements include resolved cloud collaboration and instance override issues.</p>
       </description>
     </release>
     <release version="12.0.0.18130" date="2025-09-23">

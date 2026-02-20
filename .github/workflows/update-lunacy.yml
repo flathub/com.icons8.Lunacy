@@ -34,6 +34,7 @@ jobs:
           import re
           import hashlib
           import os
+          import html
           from bs4 import BeautifulSoup
           from datetime import datetime
 
@@ -190,23 +191,25 @@ jobs:
                   def build_description(lines, release_indent):
                       description_indent = release_indent + '    '
                       if lines:
-                          li_indent = description_indent + '      '
-                          ul_indent = description_indent + '    '
-                          items = []
+                          paragraphs = []
                           for item in lines:
-                              if item:
-                                  items.append(f'{li_indent}<li>{item}</li>')
+                              cleaned = item.strip()
+                              if cleaned:
+                                  escaped = html.escape(cleaned, quote=False)
+                                  paragraphs.append(f'{description_indent}  <p>{escaped}</p>')
 
-                          if items:
+                          if paragraphs:
                               return (
                                   f'\n{description_indent}<description>\n'
-                                  f'{ul_indent}<ul>\n'
-                                  + '\n'.join(items) + '\n'
-                                  f'{ul_indent}</ul>\n'
+                                  + '\n'.join(paragraphs) + '\n'
                                   f'{description_indent}</description>'
                               )
 
-                      return f'\n{description_indent}<description>Update with bug fixes and improvements.</description>'
+                      return (
+                          f'\n{description_indent}<description>\n'
+                          f'{description_indent}  <p>Update with bug fixes and improvements.</p>\n'
+                          f'{description_indent}</description>'
+                      )
 
                   def build_release_block(version, lines, release_indent):
                       release_date = datetime.utcnow().strftime('%Y-%m-%d')
