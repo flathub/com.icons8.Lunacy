@@ -140,11 +140,9 @@ jobs:
           {release_indent}<release version="{version}" date="{today}">
           {release_indent}  <description>
           {release_indent}    <p>Beta release of Lunacy {version} with new features and improvements.</p>
-          {release_indent}    <ul>
-          {release_indent}      <li>Latest beta version with cutting-edge features</li>
-          {release_indent}      <li>Performance improvements and bug fixes</li>
-          {release_indent}      <li>Bundled at build time - no download during installation</li>
-          {release_indent}    </ul>
+          {release_indent}    <p>Latest beta version with cutting-edge features.</p>
+          {release_indent}    <p>Performance improvements and bug fixes.</p>
+          {release_indent}    <p>Bundled at build time - no download during installation.</p>
           {release_indent}  </description>
           {release_indent}</release>
           {release_indent}<release'''
