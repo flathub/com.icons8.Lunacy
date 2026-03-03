@@ -74,6 +74,12 @@
   </screenshots>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="13.0" date="2026-03-03">
+
+        <description>
+          <p>Update with bug fixes and improvements.</p>
+        </description>
+    </release>
     <release version="12.3" date="2026-02-09">
       <description>
         <p>Lunacy online is available as a full-featured web version, including deployment options for closed environments.</p>
