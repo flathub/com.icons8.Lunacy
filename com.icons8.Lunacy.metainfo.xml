@@ -74,6 +74,14 @@
   </screenshots>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="13.0.0.19828" date="2026-03-23">
+      <description>
+        <p>Beta release of Lunacy 13.0.0.19828 with new features and improvements.</p>
+        <p>Latest beta version with cutting-edge features.</p>
+        <p>Performance improvements and bug fixes.</p>
+        <p>Bundled at build time - no download during installation.</p>
+      </description>
+    </release>
     <release version="13.0.0.19801" date="2026-03-19">
       <description>
         <p>Beta release of Lunacy 13.0.0.19801 with new features and improvements.</p>
