@@ -41,6 +41,20 @@ jobs:
           # Beta URLs
           BETA_X64_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.deb"
           BETA_ARM_URL = "https://lcdn.icons8.com/setup/beta/Lunacy.ARM.deb"
+
+          def version_key(value):
+              return tuple(int(part) for part in re.findall(r'\d+', value))
+
+          def get_highest_metainfo_version(xml_file):
+              """Return the highest version already recorded in metainfo.xml"""
+              with open(xml_file, 'r') as f:
+                  content = f.read()
+
+              versions = re.findall(r'<release version="([^"]+)"', content)
+              if not versions:
+                  return None
+
+              return max(versions, key=version_key)
           
           def get_deb_version(deb_url):
               """Download deb file and extract version using dpkg-deb"""
@@ -130,12 +144,11 @@ jobs:
               if not releases_match:
                   print("ERROR: Could not find <releases> tag with existing releases")
                   return False
-              
-              base_indent = releases_match.group(1)  # indent before <releases>
-              release_indent = releases_match.group(3)  # indent before first <release>
+
+              base_indent = releases_match.group(1)
+              release_indent = releases_match.group(3)
               today = datetime.now().strftime('%Y-%m-%d')
               
-              # Create new release entry with proper indentation matching existing releases
               new_release = f'''{base_indent}<releases>
           {release_indent}<release version="{version}" date="{today}">
           {release_indent}  <description>
@@ -147,7 +160,6 @@ jobs:
           {release_indent}</release>
           {release_indent}<release'''
               
-              # Replace <releases> with new release at the top
               content = re.sub(r'(\s*)(<releases>)\s*\n(\s*)(<release)', new_release, content)
               
               # Write back to file
@@ -164,7 +176,26 @@ jobs:
               exit(1)
           
           print(f"Current beta version: {current_version}")
-          
+
+          current_repo_version = get_highest_metainfo_version('com.icons8.Lunacy.metainfo.xml')
+          print(f"Highest version in metainfo: {current_repo_version}")
+
+          if current_repo_version and version_key(current_version) < version_key(current_repo_version):
+              print(
+                  f"Skipping update because remote beta version {current_version} is older than "
+                  f"tracked version {current_repo_version}"
+              )
+
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write("updated=false\n")
+                  f.write(f"version={current_version}\n")
+                  f.write("manifest_updated=false\n")
+                  f.write("metainfo_updated=false\n")
+                  f.write(f"current_repo_version={current_repo_version}\n")
+                  f.write("skipped_downgrade=true\n")
+
+              exit(0)
+           
           # Load current manifest and extract hashes
           with open('com.icons8.Lunacy.yml', 'r') as f:
               yaml_content = f.read()
@@ -225,6 +256,8 @@ jobs:
               f.write(f"version={current_version}\n")
               f.write(f"manifest_updated={manifest_updated}\n")
               f.write(f"metainfo_updated={metainfo_updated}\n")
+              f.write(f"current_repo_version={current_repo_version}\n")
+              f.write("skipped_downgrade=false\n")
           
           print(f"=== Update completed. Files updated: {files_updated} ===")
           EOF
